@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 
+
 const STATUS_LABELS = {
   todo: "To Do",
   reading: "In Progress",
@@ -13,20 +14,37 @@ const STATUS_COLORS = {
   reading: "bg-blue-200/60 text-blue-700 backdrop-blur",
 };
 
+const type_COLORS = {
+  anime: "bg-yellow-500/80 text-white",
+  movie:"bg-purple-500/70 text-white",
+  game:"bg-gray-500/70 text-white",
+  book:"bg-blue-500/70 text-white",
+  // default:"bg-white",
+};
+
 export default function Card({ item }) {
   const [status, setStatus] = useState(item.status || "todo");
   const [rating, setRating] = useState(item.rating || 0);
+  const [type] = useState(item.type || "mx");
   const [addeddate,SetAddeddate]=useState(item.addedAt || "2025" );
-  
 
   const [showStatusMenu, setShowStatusMenu] = useState(false);
   const [showRatingMenu, setShowRatingMenu] = useState(false);
 
   return (
     <div className="w-[200px] rounded-lg border bg-white p-4 flex flex-col items-center text-center relative">
+      
+      {/* type badge */}
+      <div className={`absolute top-2 left-2  w-12 text-[10px] px-1 py-1  font-medium uppercase ${type_COLORS[type]} backdrop-blur rounded-lg`}>
+       {type}
+      </div>
+      
+      {/* completed date */}
        {status==="completed" && (<div className={`absolute bottom-2 right-2 mt-1 w-15 text-[9px] px-1 py-1  text-gray-400 `}>
          {addeddate}
          </div>)}
+         
+      {/* STATUS / RATING BADGE */}
       <div className="absolute top-2 right-2">
         {status !== "completed" && (
           <button
