@@ -1,5 +1,5 @@
 "use client";
-import Card from "@/components/common/card";
+import Card from "@/components/common/Card";
 import { tempAnime } from "@/data/tempanime";
 // import { tempGames } from "@/data/tempGames";
 export default function MoviesPage() {
