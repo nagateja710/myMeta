@@ -1,6 +1,6 @@
 "use client";
 
-import Card from "@/components/common/Card";
+import Card from "@/components/common/card_mymeta";
 import DashboardSection from "@/components/dashboard/DashboardSection";
 import DashboardStats from "@/components/dashboard/DashboardStats";
 
