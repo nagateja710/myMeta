@@ -1,14 +1,24 @@
 "use client";
-import Card from "@/components/common/Card";
-import { tempGames } from "@/data/tempgames";
-export default function MoviesPage() {
+
+import { useMemo } from "react";
+import Card from "@/components/common/card_mymeta";
+import { useLibraryStore } from "@/store/useLibraryStore";
+
+export default function BooksPage() {
+  const items = useLibraryStore((s) => s.items);
+
+  const books = useMemo(
+    () => items.filter((i) => i.type === "games"),
+    [items]
+  );
+
   return (
     <div className="min-h-screen bg-linear-to-b from-gray-400 to-white">
-       <div className="grid grid-cols-[repeat(auto-fill,200px)] gap-6 p-6">
-      {tempGames.map((item) => (
-        <Card key={item.id} item={item} />
-      ))}
-    </div>
+      <div className="grid grid-cols-[repeat(auto-fill,200px)] gap-6 p-6">
+        {books.map((item) => (
+          <Card key={item.id} item={item} />
+        ))}
+      </div>
     </div>
   );
 }

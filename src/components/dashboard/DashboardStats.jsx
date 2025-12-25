@@ -1,8 +1,8 @@
 export default function DashboardStats({ items }) {
   const stats = {
-    book: items.filter((i) => i.type === "book").length,
-    movie: items.filter((i) => i.type === "movie").length,
-    game: items.filter((i) => i.type === "game").length,
+    book: items.filter((i) => i.type === "books").length,
+    movie: items.filter((i) => i.type === "movies").length,
+    game: items.filter((i) => i.type === "games").length,
     anime: items.filter((i) => i.type === "anime").length,
   };
 
@@ -11,7 +11,7 @@ export default function DashboardStats({ items }) {
       <StatCard label="Books" count={stats.book} />
       <StatCard label="Movies" count={stats.movie} />
       <StatCard label="Games" count={stats.game} />
-      <StatCard label="Anime" count={stats.anime} />
+      <StatCard label="Animes" count={stats.anime} />
     </div>
   );
 }

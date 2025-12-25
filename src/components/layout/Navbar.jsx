@@ -9,6 +9,7 @@ const activeColor = {
   "/movies": "bg-purple-500",
   "/anime": "bg-yellow-500",
   "/games": "bg-gray-500",
+  "/friends":"bg-linear-100 from-green-400  to-yellow-400",
 };
 
 export default function Navbar() {
@@ -42,6 +43,9 @@ export default function Navbar() {
           </Link>
           <Link href="/games" className={linkClass("/games")}>
             Games
+          </Link>
+          <Link href="/friends" className={linkClass("/friends")}>
+            FRIENDS
           </Link>
         </div>
 

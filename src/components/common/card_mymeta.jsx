@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import { useState } from "react";
-
-
+import { useLibraryStore } from "@/store/useLibraryStore";
+import { usePathname } from "next/navigation";
 const STATUS_LABELS = {
   todo: "To Do",
   reading: "In Progress",
@@ -14,38 +14,61 @@ const STATUS_COLORS = {
   reading: "bg-blue-200/60 text-blue-700 backdrop-blur",
 };
 
-const type_COLORS = {
+const TYPE_COLORS = {
   anime: "bg-yellow-500/80 text-white",
-  movie:"bg-purple-500/70 text-white",
-  game:"bg-gray-500/70 text-white",
-  book:"bg-blue-500/70 text-white",
-  // default:"bg-white",
+  movie: "bg-purple-500/70 text-white",
+  game: "bg-gray-500/70 text-white",
+  book: "bg-blue-500/70 text-white",
 };
 
 export default function Card({ item }) {
-  const [status, setStatus] = useState(item.status || "todo");
-  const [rating, setRating] = useState(item.rating || 0);
-  const [type] = useState(item.type || "mx");
-  const [addeddate,SetAddeddate]=useState(item.addedAt || "2025" );
+  const { updateItem, removeItem } = useLibraryStore();
+  const pathname = usePathname();
+  // persistent data
+  const status = item.status || "todo";
+  const rating = item.rating || 0;
+  const type = item.type || "mx";
+  const addeddate = item.addedAt || "2025";
 
+  // UI state
   const [showStatusMenu, setShowStatusMenu] = useState(false);
   const [showRatingMenu, setShowRatingMenu] = useState(false);
 
   return (
-    <div className="w-[200px] rounded-lg border bg-white p-4 flex flex-col items-center text-center relative">
+    <div className="
+  w-50
+  h-75
+  rounded-lg
+  border
+  bg-white
+  p-4
+  flex
+  flex-col
+  items-center
+  text-center
+  relative
+">
+
       
-      {/* type badge */}
-      <div className={`absolute top-2 left-2  w-12 text-[10px] px-1 py-1  font-medium uppercase ${type_COLORS[type]} backdrop-blur rounded-lg`}>
-       {type}
-      </div>
-      
-      {/* completed date */}
-       {status==="completed" && (<div className={`absolute bottom-2 right-2 mt-1 w-15 text-[9px] px-1 py-1  text-gray-400 `}>
-         {addeddate}
-         </div>)}
-         
-      {/* STATUS / RATING BADGE */}
-      <div className="absolute top-2 right-2">
+      {/* TYPE BADGE only in homepage*/}
+      {pathname==="/" && (<div
+        className={`absolute top-2 left-2 w-12 z-2 text-[10px] px-1 py-1 font-medium uppercase rounded-lg backdrop-blur ${
+          TYPE_COLORS[type] || "bg-gray-400 text-white"
+        }`}
+      >
+        {type}
+      </div>)}
+
+      {/* COMPLETED DATE */}
+      {status === "completed" && (
+        <div className="absolute bottom-2 right-2 z-2 text-[9px] text-gray-400">
+          {addeddate}
+        </div>
+      )}
+
+      {/* STATUS / RATING */}
+      <div className="absolute top-2 right-2 z-2">
+        {/* STATUS BUTTON */}
         {status !== "completed" && (
           <button
             onClick={() => {
@@ -58,6 +81,7 @@ export default function Card({ item }) {
           </button>
         )}
 
+        {/* RATING BUTTON */}
         {status === "completed" && (
           <button
             onClick={() => {
@@ -69,16 +93,18 @@ export default function Card({ item }) {
             {[1, 2, 3, 4, 5].map((i) => (i <= rating ? "★" : "☆"))}
           </button>
         )}
-        
+
         {/* STATUS MENU */}
         {showStatusMenu && (
-          <div className="absolute right-0 mt-1 w-28 bg-white border rounded shadow z-10">
+          <div className="absolute right-0 mt-1 w-32 bg-white border rounded shadow z-10 overflow-hidden">
             {["todo", "reading", "completed"].map((s) => (
               <button
                 key={s}
                 onClick={() => {
-                  setStatus(s);
-                  if (s !== "completed") setRating(0);
+                  updateItem(item.id, {
+                    status: s,
+                    rating: s === "completed" ? rating : 0,
+                  });
                   setShowStatusMenu(false);
                 }}
                 className="block w-full px-3 py-1 text-xs text-left hover:bg-gray-100"
@@ -86,6 +112,17 @@ export default function Card({ item }) {
                 {s === "completed" ? "Completed" : STATUS_LABELS[s]}
               </button>
             ))}
+
+            {/* DIVIDER */}
+            <div className="border-t my-1" />
+
+            {/* DELETE */}
+            <button
+              onClick={() => removeItem(item.id)}
+              className="block w-full px-3 py-1 text-xs text-left text-red-600 hover:bg-red-50"
+            >
+              Delete
+            </button>
           </div>
         )}
 
@@ -94,8 +131,7 @@ export default function Card({ item }) {
           <div className="absolute right-0 mt-1 bg-white border rounded-full shadow z-10 px-2 py-1 flex items-center gap-1">
             <button
               onClick={() => {
-                setStatus("todo");
-                setRating(0);
+                updateItem(item.id, { status: "todo", rating: 0 });
                 setShowRatingMenu(false);
               }}
               className="text-sm px-1 text-gray-500 hover:text-red-600"
@@ -108,7 +144,7 @@ export default function Card({ item }) {
               <button
                 key={star}
                 onClick={() => {
-                  setRating(star);
+                  updateItem(item.id, { rating: star });
                   setShowRatingMenu(false);
                 }}
                 className="text-lg leading-none"
@@ -127,29 +163,27 @@ export default function Card({ item }) {
       </div>
 
       {/* COVER */}
-      <div className="mb-3">
-        <Image
-          src={item.cover || "/images/download.png"}
-          alt={item.title || "corrupted"}
-          width={120}
-          height={180}
-          className="rounded object-cover"
-        />
-      </div>
+{/* COVER */}
+<div className="relative z-0 w-[120px] aspect-[2/3] mb-3 overflow-hidden rounded">
+  <Image
+    src={item.cover || "/images/download.png"}
+    alt={item.title || "corrupted"}
+    fill
+    className="object-cover"
+    sizes="120px"
+  />
+</div>
+
+
+
 
       {/* TITLE */}
-      <h3
-        className="font-semibold text-sm leading-tight line-clamp-2"
-        title={item.title}
-      >
+      <h3 className="font-semibold text-sm leading-tight line-clamp-2">
         {item.title}
       </h3>
 
       {/* SUBTITLE */}
-      <p
-        className="mt-1 text-xs text-gray-500 truncate"
-        title={item.subtitle}
-      >
+      <p className="mt-1 text-xs text-gray-500 truncate">
         {item.subtitle}
       </p>
 
