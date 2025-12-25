@@ -1,7 +1,3 @@
-Here’s a **polished, production-ready README** with clearer language, consistent formatting, and a more professional open-source tone—without changing your intent or features.
-
----
-
 # 🎬📚🎮 MyMeta — Unified Media Tracker
 
 **MyMeta** is a personal media tracking web application that helps you **discover, track, rate, and organize movies, anime, games, and books** in one unified dashboard.
