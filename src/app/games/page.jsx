@@ -13,12 +13,13 @@ export default function BooksPage() {
   );
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-gray-400 to-white">
-      <div className="grid grid-cols-[repeat(auto-fill,200px)] gap-6 p-6">
-        {books.map((item) => (
-          <Card key={item.id} item={item} />
-        ))}
-      </div>
-    </div>
+<div className="min-h-screen bg-gradient-to-b from-gray-400 to-white">
+  <div className="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-6 p-6">
+    {books.map((item) => (
+      <Card key={item.id} item={item} />
+    ))}
+  </div>
+</div>
+
   );
 }
