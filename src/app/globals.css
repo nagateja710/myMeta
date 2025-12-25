@@ -12,7 +12,7 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
@@ -23,4 +23,122 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Add to your global CSS or component styles */
+.todo-app {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.kanban-board {
+  display: flex;
+  gap: 20px;
+  min-height: 500px;
+}
+
+.column {
+  flex: 1;
+  background: #f5f5f5;
+  border-radius: 15px;
+  padding: 20px;
+  min-height: 400px;
+}
+
+.in-progress-column {
+  border: 3px solid #007bff;
+}
+
+.todo-column {
+  border: 3px solid #ff8c00;
+}
+
+.done-column {
+  border: 3px solid #ff8c00;
+}
+
+.create-board-column {
+  border: 3px solid #28a745;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.task-card {
+  background: white;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.task-header {
+  padding: 15px;
+  cursor: pointer;
+}
+
+.task-header:hover {
+  background: #f8f9fa;
+}
+
+.task-details {
+  border-top: 1px solid #eee;
+  padding: 20px;
+  background: #fafafa;
+}
+
+.task-content {
+  display: flex;
+  gap: 20px;
+}
+
+.task-info {
+  flex: 1;
+}
+
+.task-image {
+  width: 150px;
+  height: 100px;
+}
+
+.task-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 2px solid #dc3545;
+}
+
+.updates {
+  margin-top: 15px;
+}
+
+.update-item {
+  margin: 8px 0;
+  color: #666;
+}
+
+.create-board-btn {
+  padding: 15px 30px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.create-board-btn:hover {
+  background: #218838;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
