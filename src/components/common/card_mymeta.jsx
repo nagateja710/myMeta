@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { useLibraryStore } from "@/store/useLibraryStore";
 import { usePathname } from "next/navigation";
+
 const STATUS_LABELS = {
   todo: "To Do",
   reading: "In Progress",
@@ -16,58 +17,82 @@ const STATUS_COLORS = {
 
 const TYPE_COLORS = {
   anime: "bg-yellow-500/80 text-white",
-  movie: "bg-purple-500/70 text-white",
-  game: "bg-gray-500/70 text-white",
-  book: "bg-blue-500/70 text-white",
+  movies: "bg-purple-500/70 text-white",
+  games: "bg-gray-500/70 text-white",
+  books: "bg-blue-500/70 text-white",
 };
 
-export default function Card({ item }) {
+export default function Card({ item, onEdit }) {
   const { updateItem, removeItem } = useLibraryStore();
   const pathname = usePathname();
+
   // persistent data
   const status = item.status || "todo";
   const rating = item.rating || 0;
   const type = item.type || "mx";
-  const addeddate = item.addedAt || "2025";
+  const addeddate = item.ratedAt || "2025";
 
   // UI state
   const [showStatusMenu, setShowStatusMenu] = useState(false);
   const [showRatingMenu, setShowRatingMenu] = useState(false);
 
   return (
-    <div className="
-  w-50
-  h-75
-  rounded-lg
-  border
-  bg-white
-  p-4
-  flex
-  flex-col
-  items-center
-  text-center
-  relative
-">
-
-      
-      {/* TYPE BADGE only in homepage*/}
-      {pathname==="/" && (<div
-        className={`absolute top-2 left-2 w-12 z-2 text-[10px] px-1 py-1 font-medium uppercase rounded-lg backdrop-blur ${
-          TYPE_COLORS[type] || "bg-gray-400 text-white"
-        }`}
+    <div
+      className="
+        group
+        w-50
+        h-75
+        rounded-lg
+        border
+        bg-white
+        p-4
+        flex
+        flex-col
+        items-center
+        text-center
+        relative
+      "
+    >
+      {/* ✏️ EDIT BUTTON */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onEdit?.(item);
+        }}
+        className="
+          absolute bottom-2 left-2
+          hidden group-hover:flex
+          items-center justify-center
+          w-7 h-7
+          rounded-full
+         text-sm border border-amber-600
+          z-30
+        "
+        title="Edit"
       >
-        {type}
-      </div>)}
+        ✏️
+      </button>
+
+      {/* TYPE BADGE (home page only) */}
+      {pathname === "/" && (
+        <div
+          className={`absolute top-2 left-2 z-20 text-[10px] px-1 py-1 font-medium uppercase rounded-lg backdrop-blur ${
+            TYPE_COLORS[type] || "bg-gray-400 text-white"
+          }`}
+        >
+          {type.at(-1) === "s" ? type.slice(0, -1) : type}
+        </div>
+      )}
 
       {/* COMPLETED DATE */}
       {status === "completed" && (
-        <div className="absolute bottom-2 right-2 z-2 text-[9px] text-gray-400">
-          {addeddate}
+        <div className="absolute bottom-2 right-2 z-10 text-[9px] text-gray-400">
+          {item.ratedAt}
         </div>
       )}
 
       {/* STATUS / RATING */}
-      <div className="absolute top-2 right-2 z-2">
+      <div className="absolute top-2 right-2 z-20">
         {/* STATUS BUTTON */}
         {status !== "completed" && (
           <button
@@ -96,7 +121,7 @@ export default function Card({ item }) {
 
         {/* STATUS MENU */}
         {showStatusMenu && (
-          <div className="absolute right-0 mt-1 w-32 bg-white border rounded shadow z-10 overflow-hidden">
+          <div className="absolute right-0 mt-1 w-32 bg-white border rounded shadow z-30 overflow-hidden">
             {["todo", "reading", "completed"].map((s) => (
               <button
                 key={s}
@@ -113,7 +138,6 @@ export default function Card({ item }) {
               </button>
             ))}
 
-            {/* DIVIDER */}
             <div className="border-t my-1" />
 
             {/* DELETE */}
@@ -128,10 +152,15 @@ export default function Card({ item }) {
 
         {/* RATING MENU */}
         {showRatingMenu && status === "completed" && (
-          <div className="absolute right-0 mt-1 bg-white border rounded-full shadow z-10 px-2 py-1 flex items-center gap-1">
+          <div className="absolute right-0 mt-1 bg-white border rounded-full shadow z-30 px-2 py-1 flex items-center gap-1">
             <button
               onClick={() => {
-                updateItem(item.id, { status: "todo", rating: 0 });
+                updateItem(item.id, {
+                  status: "todo",
+                  rating: 0,
+                  ratedAt: null,
+                });
+
                 setShowRatingMenu(false);
               }}
               className="text-sm px-1 text-gray-500 hover:text-red-600"
@@ -144,7 +173,11 @@ export default function Card({ item }) {
               <button
                 key={star}
                 onClick={() => {
-                  updateItem(item.id, { rating: star });
+                  updateItem(item.id, {
+                    rating: star,
+                    ratedAt: new Date().toISOString().slice(0, 10),
+                  });
+
                   setShowRatingMenu(false);
                 }}
                 className="text-lg leading-none"
@@ -163,19 +196,15 @@ export default function Card({ item }) {
       </div>
 
       {/* COVER */}
-{/* COVER */}
-<div className="relative z-0 w-[120px] aspect-[2/3] mb-3 overflow-hidden rounded">
-  <Image
-    src={item.cover || "/images/download.png"}
-    alt={item.title || "corrupted"}
-    fill
-    className="object-cover"
-    sizes="120px"
-  />
-</div>
-
-
-
+      <div className="relative z-0 w-[120px] aspect-[2/3] mb-3 overflow-hidden rounded">
+        <Image
+          src={item.cover || "/images/download.png"}
+          alt={item.title || "corrupted"}
+          fill
+          className="object-cover"
+          sizes="120px"
+        />
+      </div>
 
       {/* TITLE */}
       <h3 className="font-semibold text-sm leading-tight line-clamp-2">
@@ -183,15 +212,11 @@ export default function Card({ item }) {
       </h3>
 
       {/* SUBTITLE */}
-      <p className="mt-1 text-xs text-gray-500 truncate">
-        {item.subtitle}
-      </p>
+      <p className="mt-1 text-xs text-gray-500 truncate">{item.subtitle}</p>
 
       {/* YEAR */}
       {item.year && (
-        <p className="text-[11px] text-gray-400 mt-0.5">
-          {item.year}
-        </p>
+        <p className="text-[11px] text-gray-400 mt-0.5">{item.year}</p>
       )}
     </div>
   );

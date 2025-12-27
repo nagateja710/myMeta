@@ -1,24 +1,47 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import Card from "@/components/common/card_mymeta";
+import AdvancedAddInline from "@/components/common/AdvancedAddInline";
 import { useLibraryStore } from "@/store/useLibraryStore";
 
-export default function BooksPage() {
+export default function AnimePage() {
   const items = useLibraryStore((s) => s.items);
-
-  const books = useMemo(
-    () => items.filter((i) => i.type === "movies"),
+  const [editingId, setEditingId] = useState(null);
+  const type="movies"
+  const animeItems = useMemo(
+    () => items.filter((i) => i.type === type),
     [items]
   );
 
   return (
     <div className="min-h-screen bg-linear-to-b from-purple-400 to-white">
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-6 p-6">
-          {books.map((item) => (
-            <Card key={item.id} item={item} />
-          ))}
-        </div>
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-6 p-6">
+        {animeItems.map((item) => {
+          const isEditing = editingId === item.id;
+
+          return (
+            <div
+              key={item.id}
+              className={`
+        relative
+        ${isEditing ? "z-30 col-span-1 sm:col-span-2" : "z-0"}
+      `}
+            >
+              {isEditing ? (
+                <AdvancedAddInline
+                  item={item}
+                  type="type"
+                  mode="edit"
+                  onCancel={() => setEditingId(null)}
+                />
+              ) : (
+                <Card item={item} onEdit={() => setEditingId(item.id)} />
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
