@@ -14,7 +14,7 @@ export default function Home() {
 
   // 🧠 derived views
   const continueItems = useMemo(
-    () => items.filter((i) => i.status === "reading"),
+    () => items.filter((i) => i.status === "reading" || i.status==="ongoing"),
     [items]
   );
 
