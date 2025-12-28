@@ -1,12 +1,17 @@
 export default function DashboardSection({ title, children }) {
-  if (!children || children.length === 0) return null;
+  // Normalize children (React can pass single child or array)
+  const items = Array.isArray(children)
+    ? children
+    : children
+    ? [children]
+    : [];
+
+  if (items.length === 0) return null;
 
   return (
     <section className="space-y-3">
-      {/* SECTION TITLE */}
       <h2 className="text-lg font-semibold">{title}</h2>
 
-      {/* HORIZONTAL CAROUSEL */}
       <div
         className="
           flex gap-6
@@ -16,7 +21,7 @@ export default function DashboardSection({ title, children }) {
           snap-x snap-mandatory
         "
       >
-        {children.map((child, idx) => (
+        {items.map((child, idx) => (
           <div
             key={idx}
             className="snap-start shrink-0"

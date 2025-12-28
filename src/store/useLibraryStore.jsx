@@ -6,6 +6,7 @@ export const useLibraryStore = create(
     (set) => ({
       items: [],
 
+      setItems: (items) => set({ items }),
       addItem: (item) =>
         set((state) => ({
           items: [item, ...state.items],
@@ -22,7 +23,9 @@ export const useLibraryStore = create(
         set((state) => ({
           items: state.items.filter((i) => i.id !== id),
         })),
+      reset: () => set({ items: [] }), 
     }),
+
     { name: "mymeta-library" }
   )
 );

@@ -1,26 +1,38 @@
 export default function DashboardStats({ items }) {
-  const stats = {
-    book: items.filter((i) => i.type === "books").length,
-    movie: items.filter((i) => i.type === "movies").length,
-    game: items.filter((i) => i.type === "games").length,
-    anime: items.filter((i) => i.type === "anime").length,
-  };
+  const books = items.filter(
+    (i) => i.media?.type === "book"
+  ).length;
+
+  const movies = items.filter(
+    (i) => i.media?.type === "movie"
+  ).length;
+
+  const games = items.filter(
+    (i) => i.media?.type === "game"
+  ).length;
+
+  const animes = items.filter(
+    (i) => i.media?.type === "anime"
+  ).length;
+
+  const stats = [
+    { label: "Books", value: books },
+    { label: "Movies", value: movies },
+    { label: "Games", value: games },
+    { label: "Animes", value: animes },
+  ];
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      <StatCard label="Books" count={stats.book} />
-      <StatCard label="Movies" count={stats.movie} />
-      <StatCard label="Games" count={stats.game} />
-      <StatCard label="Animes" count={stats.anime} />
-    </div>
-  );
-}
-
-function StatCard({ label, count }) {
-  return (
-    <div className="rounded-lg border bg-white p-4 text-center">
-      <p className="text-2xl text-black font-bold">{count}</p>
-      <p className="text-sm text-gray-500">{label}</p>
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {stats.map((s) => (
+        <div
+          key={s.label}
+          className="bg-white rounded-lg border p-4 text-center"
+        >
+          <div className="text-2xl font-bold">{s.value}</div>
+          <div className="text-sm text-gray-600">{s.label}</div>
+        </div>
+      ))}
     </div>
   );
 }

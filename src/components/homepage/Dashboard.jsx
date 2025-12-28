@@ -6,67 +6,47 @@ import DashboardSection from "@/components/dashboard/DashboardSection";
 import DashboardStats from "@/components/dashboard/DashboardStats";
 import Card from "@/components/cards/card_mymeta";
 
+import { useLibraryStore } from "@/store/useLibraryStore";
 import { apiFetch } from "@/lib/api";
 import { useAuthStore } from "@/store/useAuthStore";
 
-/* -----------------------------
-   🔧 NORMALIZE BACKEND RESPONSE
--------------------------------- */
-function normalizeItem(item) {
-  // Case A: already normalized
-  if (typeof item.media === "object" && item.media !== null) {
-    return item;
-  }
-
-  // Case B: flat backend response
-  if (item.media_type) {
-    return {
-      ...item,
-      media: {
-        type: item.media_type,
-        title: item.title,
-        cover_url: item.cover_url,
-        synopsis: item.synopsis,
-        release_year: item.release_year,
-      },
-    };
-  }
-
-  // Case C: fallback
-  return item;
-}
-
 export default function Home() {
+  const items = useLibraryStore((s) => s.items);
+  const setItems = useLibraryStore((s) => s.setItems);
+
   const user = useAuthStore((s) => s.user);
   const hasHydrated = useAuthStore((s) => s.hasHydrated);
 
-  const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
   /* =========================
      FETCH FROM BACKEND
      ========================= */
   useEffect(() => {
+    // ⛔ wait until auth hydration completes
     if (!hasHydrated) return;
+
+    // 👤 not logged in → stop loading, don't fetch
     if (!user) {
       setLoading(false);
       return;
     }
 
-    async function loadLibrary() {
-      try {
-        const data = await apiFetch("/user-media/");
-        console.log("RAW USER MEDIA:", data);
-        setItems(data.map(normalizeItem)); // 🔥 FIX
-      } catch (err) {
-        console.error("Failed to load library", err);
-      } finally {
-        setLoading(false);
-      }
-    }
+async function loadLibrary() {
+  try {
+    const data = await apiFetch("/user-media/");
+    console.log("FETCHED FROM API:", data); // 👈 ADD THIS
+    setItems(data);
+  } catch (err) {
+    console.error("Failed to load library", err);
+  } finally {
+    setLoading(false);
+  }
+}
+
 
     loadLibrary();
-  }, [hasHydrated, user]);
+  }, [hasHydrated, user, setItems]);
 
   /* =========================
      DERIVED VIEWS

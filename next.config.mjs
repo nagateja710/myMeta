@@ -1,6 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
+    domains: [
+      "www.shutterstock.com",
+      "images.unsplash.com",
+      "i.imgur.com",
+      "cdn.myanimelist.net",
+      "m.media-amazon.com",
+    ],
     remotePatterns: [
       // 📘 Google Books (HTTP!)
       {
