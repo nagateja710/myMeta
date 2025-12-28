@@ -83,15 +83,26 @@ export default function AnimePage() {
       {editingItem && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-3">
           <div className="w-full max-w-[520px]">
-            <AdvancedAddInline
-              item={editingItem}
-              mode="edit"
-              onCancel={() => setEditingItem(null)}
-              onSaved={(updates) => {
-                updateItem(editingItem.id, updates);
-                setEditingItem(null);
-              }}
-            />
+           <AdvancedAddInline
+                         item={editingItem}
+                         mode="edit"
+                         onCancel={() => setEditingItem(null)}
+                         onSaved={(updates, deletedId) => {
+                           // 🔥 DELETE case
+                           if (deletedId) {
+                             removeItem(deletedId);
+                             setEditingItem(null);
+                             return;
+                           }
+           
+                           // ✅ UPDATE case
+                           if (updates) {
+                             updateItem(editingItem.id, updates);
+                           }
+           
+                           setEditingItem(null);
+                         }}
+                       />
           </div>
         </div>
       )}

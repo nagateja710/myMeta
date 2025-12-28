@@ -12,11 +12,12 @@ export async function apiFetch(path, options = {}) {
     },
     body: options.body,
   });
-  
+
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(text);
+     throw new Error(text || "API request failed");
   }
 
-  return res.json();
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
 }

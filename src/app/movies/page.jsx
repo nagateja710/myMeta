@@ -8,8 +8,7 @@ import { useLibraryStore } from "@/store/useLibraryStore";
 /* -----------------------------
    🎨 PAGE COLORS
 -------------------------------- */
-const page_col={
- 
+const page_col = {
   anime: "yellow",
   movie: "from-purple-400 to-white",
   game: "gray",
@@ -46,15 +45,11 @@ export default function AnimePage() {
   }
 
   return (
-    <div
-      className={`min-h-screen bg-linear-to-b ${page_col[type]}`}
-    >
+    <div className={`min-h-screen bg-linear-to-b ${page_col[type]}`}>
       {/* HEADER */}
       <div className="p-6">
         <h1 className="text-2xl font-bold">Movies</h1>
-        <p className="text-sm text-gray-700">
-          Track what you’re watching
-        </p>
+        <p className="text-sm text-gray-700">Track what you’re watching</p>
       </div>
 
       {/* EMPTY STATE */}
@@ -71,9 +66,7 @@ export default function AnimePage() {
             key={item.id}
             item={item}
             onEdit={() => setEditingItem(item)}
-            onUpdated={(updates) =>
-              updateItem(item.id, updates)
-            }
+            onUpdated={(updates) => updateItem(item.id, updates)}
             onDeleted={(id) => removeItem(id)}
           />
         ))}
@@ -87,8 +80,19 @@ export default function AnimePage() {
               item={editingItem}
               mode="edit"
               onCancel={() => setEditingItem(null)}
-              onSaved={(updates) => {
-                updateItem(editingItem.id, updates);
+              onSaved={(updates, deletedId) => {
+                // 🔥 DELETE case
+                if (deletedId) {
+                  removeItem(deletedId);
+                  setEditingItem(null);
+                  return;
+                }
+
+                // ✅ UPDATE case
+                if (updates) {
+                  updateItem(editingItem.id, updates);
+                }
+
                 setEditingItem(null);
               }}
             />
