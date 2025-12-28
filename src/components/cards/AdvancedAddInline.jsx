@@ -177,6 +177,7 @@ export default function AdvancedAddInline({
         Notes
       </label>
       <textarea
+      placeholder="Your thoughts..."
         rows={5}
         value={form.notes}
         onChange={(e) =>

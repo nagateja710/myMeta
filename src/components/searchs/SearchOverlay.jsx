@@ -84,7 +84,7 @@ export default function SearchOverlay({ loading, results }) {
             title: advancedItem.title,
             cover_url: advancedItem.cover,
             synopsis: advancedItem.subtitle,
-            release_year: advancedItem.year,
+            release_year: safeYear(advancedItem.year),
             type: section,
           }}
           mode="add"
