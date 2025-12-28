@@ -182,7 +182,6 @@ export default function AdvancedAddInline({
         onChange={(e) =>
           setForm((f) => ({ ...f, notes: e.target.value }))
         }
-        placeholder="Your personal thoughts…"
         className="w-full rounded-md border px-3 py-2 text-sm resize-none"
       />
     </div>
@@ -219,7 +218,7 @@ export default function AdvancedAddInline({
     </div>
 
     {/* RATING */}
-    {form.status == "completed" && (
+          {form.status === "completed" && (
       <div className="flex gap-0.5">
         {[1, 2, 3, 4, 5].map((i) => (
           <button

@@ -31,12 +31,12 @@ const activeColor = {
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-
+const resetLibrary = useLibraryStore((state) => state.resetLibrary);
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
  const hasHydrated = useAuthStore((s) => s.hasHydrated);
 
-  const resetLibrary = useLibraryStore((s) => s.reset); // ✅ ADD THIS
+  // const resetLibrary = useLibraryStore((s) => s.reset); // ✅ ADD THIS
 
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);

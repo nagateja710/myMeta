@@ -38,8 +38,7 @@ function normalizeItem(item) {
 
 export default function SearchOverlay({ loading, results }) {
   const pathname = usePathname();
-  const section = pathname.split("/")[1]; // books | anime | movies | games
-
+  const section= pathname === "/anime" ? pathname.slice(1) : pathname.slice(1, -1);
   const addItem = useLibraryStore((s) => s.addItem);
 
   const [advancedItem, setAdvancedItem] = useState(null);
@@ -48,6 +47,7 @@ export default function SearchOverlay({ loading, results }) {
   /* =========================
      ⚡ QUICK ADD
      ========================= */
+    // console.log(section,section==='anime');
   async function quickAdd(item) {
     try {
       setAddingId(item.id);
@@ -55,7 +55,8 @@ export default function SearchOverlay({ loading, results }) {
       const created = await apiFetch("/add-to-library/", {
         method: "POST",
         body: JSON.stringify({
-          type: section === "anime" ? section : section.slice(0, -1),
+          type: section,
+          
           title: item.title,
           synopsis: item.subtitle,
           release_year: safeYear(item.year),
@@ -84,7 +85,7 @@ export default function SearchOverlay({ loading, results }) {
             cover_url: advancedItem.cover,
             synopsis: advancedItem.subtitle,
             release_year: advancedItem.year,
-            type: section.slice(0, -1),
+            type: section,
           }}
           mode="add"
           onCancel={() => setAdvancedItem(null)}

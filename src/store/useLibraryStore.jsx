@@ -5,8 +5,22 @@ export const useLibraryStore = create(
   persist(
     (set) => ({
       items: [],
+      hydrated: false,
 
-      setItems: (items) => set({ items }),
+      /* 🔥 RESET LIBRARY ON LOGOUT */
+      resetLibrary: () =>
+        set({
+          items: [],
+          hydrated: false,
+        }),
+
+      /* 🔥 HYDRATE ON LOGIN */
+      hydrateLibrary: (items) =>
+        set({
+          items,
+          hydrated: true,
+        }),
+
       addItem: (item) =>
         set((state) => ({
           items: [item, ...state.items],
@@ -23,9 +37,9 @@ export const useLibraryStore = create(
         set((state) => ({
           items: state.items.filter((i) => i.id !== id),
         })),
-      reset: () => set({ items: [] }), 
     }),
-
-    { name: "mymeta-library" }
+    {
+      name: "mymeta-library",
+    }
   )
 );
