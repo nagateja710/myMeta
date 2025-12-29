@@ -296,8 +296,9 @@ export default function Card({ item, onEdit, onUpdated, onDeleted }) {
 
       {/* UPDATED DATE (only meaningful for rating) */}
       {status === "completed" && updatedAt && (
-        <div className="text-[11px] text-gray-500 absolute bottom-2 right-2 z-30">
-          Rated on {new Date(updatedAt).toLocaleDateString()}
+        <div className="text-[8px] text-gray-500 absolute bottom-2 right-2 z-30">
+          <p className="pl-3">Rated on </p>
+          {new Date(updatedAt).toLocaleDateString()}
         </div>
       )}
     </div>

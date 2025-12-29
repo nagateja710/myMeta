@@ -134,7 +134,7 @@ export default function AnimePage() {
             {pathname.slice(1)}
           </h1>
           <p className="text-sm text-gray-300">
-            Track what your watching
+            Track what your Playing
           </p>
         </div>
 
