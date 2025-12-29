@@ -157,11 +157,11 @@ export default function AdvancedAddInline({
       </div>
 
 {/* BODY */}
-<div className="grid gap-4 grid-cols-[120px_1fr]">
+<div className="grid gap-3 grid-cols-[80px_1fr]">
 
 
   {/* LEFT COLUMN */}
-  <div className="flex flex-col gap-3">
+  <div className="flex flex-col gap-3 ">
     {/* COVER */}
     <Image
       src={media.cover_url || "/images/download.png"}
@@ -189,7 +189,7 @@ export default function AdvancedAddInline({
   </div>
 
   {/* RIGHT COLUMN */}
-  <div className="flex flex-col gap-4">
+  <div className="flex flex-col gap-4 min-w-0">
 
     {/* MEDIA INFO */}
     <div>
@@ -238,7 +238,7 @@ export default function AdvancedAddInline({
     )}
 
     {/* SYNOPSIS (SMALL FIELD) */}
-    <div>
+    <div className=" min-w-0">
       <label className="block text-xs font-medium text-gray-600 mb-1">
          (author / director / tags)
       </label>
