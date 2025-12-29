@@ -40,14 +40,22 @@ const resetLibrary = useLibraryStore((state) => state.resetLibrary);
 
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);
+  const mobileMenuRef = useRef(null);
+
 
   // close dropdown on outside click
   useEffect(() => {
-    function handleClickOutside(e) {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
-        setOpen(false);
-      }
-    }
+function handleClickOutside(e) {
+  if (
+    menuRef.current &&
+    !menuRef.current.contains(e.target) &&
+    mobileMenuRef.current &&
+    !mobileMenuRef.current.contains(e.target)
+  ) {
+    setOpen(false);
+  }
+}
+
     document.addEventListener("mousedown", handleClickOutside);
     return () =>
       document.removeEventListener("mousedown", handleClickOutside);
@@ -90,7 +98,7 @@ const resetLibrary = useLibraryStore((state) => state.resetLibrary);
             {navItems.map((item) => (
               <Link
                 key={item.path}
-                href={user ? item.path : "/"}
+                href={user ? item.path : "/signin"}
                 className={linkClass(item.path)}
               >
                 {item.label}
@@ -201,7 +209,7 @@ const resetLibrary = useLibraryStore((state) => state.resetLibrary);
         </div>
 
         {user && open && (
-          <div className="absolute right-3 top-14 w-56 bg-white border rounded-lg shadow-lg z-50">
+          <div ref={mobileMenuRef} className="absolute right-3 top-14 w-56 bg-white border rounded-lg shadow-lg z-50">
             <div className="px-4 py-3 border-b">
               <p className="text-sm font-semibold truncate">
                 {user.username}
@@ -229,7 +237,8 @@ const resetLibrary = useLibraryStore((state) => state.resetLibrary);
             return (
               <Link
                 key={item.path}
-                href={item.path}
+                 href={user ? item.path : "/signin"}
+                // href={item.path}
                 className={`flex flex-col items-center justify-center rounded-full py-1 flex-1 ${
                   isActive
                     ? `${activeColor[pathname] ?? "bg-black"} text-white`
