@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
 
-import Dashboard from "@/components/homePage/Dashboard";
-import AboutPage from "@/components/homePage/about";
+import Dashboard from "@/components/homepage/Dashboard";
+import AboutPage from "@/components/homepage/about";
 
 export default function HomePage() {
   const user = useAuthStore((s) => s.user);
