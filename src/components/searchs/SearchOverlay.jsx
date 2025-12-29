@@ -52,7 +52,7 @@ export default function SearchOverlay({ loading, results }) {
     try {
       setAddingId(item.id);
 
-      const created = await apiFetch("/add-to-library/", {
+      const created = await apiFetch("/api/add-to-library/", {
         method: "POST",
         body: JSON.stringify({
           type: section,

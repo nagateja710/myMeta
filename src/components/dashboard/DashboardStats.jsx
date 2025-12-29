@@ -27,10 +27,10 @@ export default function DashboardStats({ items }) {
       {stats.map((s) => (
         <div
           key={s.label}
-          className="bg-white rounded-lg border p-4 text-center"
+          className="bg-white/30 rounded-lg border p-4 text-center"
         >
-          <div className="text-2xl font-bold">{s.value}</div>
-          <div className="text-sm text-gray-600">{s.label}</div>
+          <div className="text-2xl font-bold text-violet-300">{s.value}</div>
+          <div className="text-sm text-gray-200">{s.label}</div>
         </div>
       ))}
     </div>

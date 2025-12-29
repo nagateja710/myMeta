@@ -69,7 +69,7 @@ export default function AdvancedAddInline({
          ADD TO LIBRARY
          ====================== */
       if (mode === "add") {
-        const created = await apiFetch("/add-to-library/", {
+        const created = await apiFetch("/api/add-to-library/", {
           method: "POST",
           body: JSON.stringify({
             title: media.title,
@@ -110,7 +110,7 @@ export default function AdvancedAddInline({
           payload.updated_at = updatedAt;
         }
 
-        const updated = await apiFetch(`/user-media/${item.id}/`, {
+        const updated = await apiFetch(`/api/user-media/${item.id}/`, {
           method: "PATCH",
           body: JSON.stringify(payload),
         });
@@ -130,7 +130,7 @@ export default function AdvancedAddInline({
   async function remove() {
     if (!confirm("Remove this from your library?")) return;
 
-    await apiFetch(`/user-media/${item.id}/`, { method: "DELETE" });
+    await apiFetch(`/api/user-media/${item.id}/`, { method: "DELETE" });
     onSaved?.(null, item.id);
     onCancel();
   }

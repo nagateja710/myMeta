@@ -26,7 +26,7 @@ export function LibraryHydrator() {
     if (user && !libraryHydrated) {
       (async () => {
         try {
-          const data = await apiFetch("/user-media/");
+          const data = await apiFetch("/api/user-media/");
           hydrateLibrary(data);
         } catch (err) {
           console.error("Failed to hydrate library", err);

@@ -55,7 +55,7 @@ export default function Home() {
 
     async function loadLibrary() {
       try {
-        const data = await apiFetch("/user-media/");
+        const data = await apiFetch("/api/user-media/");
         console.log("RAW USER MEDIA:", data);
         setItems(data.map(normalizeItem)); // 🔥 FIX
       } catch (err) {
@@ -108,8 +108,14 @@ export default function Home() {
      ========================= */
   if (loading) {
     return (
-      <div className="min-h-screen bg-linear-150 from-blue-400 via-purple-400 to-white flex items-center justify-center">
-        <p className="text-white text-sm">Loading your library…</p>
+      <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-zinc-950 via-zinc-900 to-black flex items-center justify-center">
+        {/* BACKGROUND DECOR */}
+        <div className="absolute inset-0">
+          <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-indigo-500/20 blur-3xl" />
+          <div className="absolute top-1/3 -right-24 h-96 w-96 rounded-full bg-fuchsia-500/20 blur-3xl" />
+        </div>
+        
+        <p className="text-gray-300 text-sm relative z-10">Loading your library…</p>
       </div>
     );
   }
@@ -119,12 +125,17 @@ export default function Home() {
      ========================= */
   if (!hasDashboardItems) {
     return (
-      <div className="min-h-screen bg-linear-150 from-blue-400 via-purple-400 to-white">
-        <div className="max-w-7xl mx-auto p-6">
+      <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-zinc-950 via-zinc-900 to-black text-white">
+        {/* BACKGROUND DECOR */}
+        <div className="absolute inset-0">
+          <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-indigo-500/20 blur-3xl" />
+          <div className="absolute top-1/3 -right-24 h-96 w-96 rounded-full bg-fuchsia-500/20 blur-3xl" />
+        </div>
 
+        <div className="max-w-7xl mx-auto p-6 relative z-10">
           <header>
-            <h1 className="text-2xl font-bold">MyMeta Dashboard</h1>
-            <p className="text-sm text-white">
+            <h1 className="text-2xl font-bold text-white">MyMeta Dashboard</h1>
+            <p className="text-sm text-gray-300">
               Track everything you read, watch, and play
             </p>
           </header>
@@ -133,11 +144,11 @@ export default function Home() {
             <DashboardStats items={items} />
           </div>
 
-          <div className="flex min-h-[60vh] flex-col items-center justify-center text-center text-white">
-            <h2 className="text-2xl font-semibold mb-2">
+          <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
+            <h2 className="text-2xl font-semibold mb-2 text-white">
               Your library is empty
             </h2>
-            <p className="text-sm max-w-md text-white/90">
+            <p className="text-sm max-w-md text-gray-300">
               Start by searching for a book, movie, anime, or game using the search bar above.
             </p>
           </div>
@@ -150,12 +161,17 @@ export default function Home() {
      NORMAL DASHBOARD
      ========================= */
   return (
-    <div className="min-h-screen bg-linear-150 from-blue-400 via-purple-400 to-white">
-      <div className="max-w-7xl mx-auto p-6 space-y-10">
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-zinc-950 via-zinc-900 to-black text-white">
+      {/* BACKGROUND DECOR */}
+      <div className="absolute inset-0">
+        <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-indigo-500/20 blur-3xl" />
+        <div className="absolute top-1/3 -right-24 h-96 w-96 rounded-full bg-fuchsia-500/20 blur-3xl" />
+      </div>
 
+      <div className="max-w-7xl mx-auto p-6 space-y-10 relative z-10">
         <header>
-          <h1 className="text-2xl font-bold">MyMeta Dashboard</h1>
-          <p className="text-sm text-white">
+          <h1 className="text-2xl font-bold text-white">MyMeta Dashboard</h1>
+          <p className="text-sm text-gray-300">
             Track everything you read, watch, and play
           </p>
         </header>
@@ -185,7 +201,6 @@ export default function Home() {
             <Card key={item.id} item={item} />
           ))}
         </DashboardSection>
-
       </div>
     </div>
   );

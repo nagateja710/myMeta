@@ -10,7 +10,7 @@ export default function DashboardSection({ title, children }) {
 
   return (
     <section className="space-y-3">
-      <h2 className="text-lg font-semibold">{title}</h2>
+      <h2 className="text-lg font-semibold text-violet-100">{title}</h2>
 
       <div
         className="

@@ -79,7 +79,7 @@ const resetLibrary = useLibraryStore((state) => state.resetLibrary);
   return (
     <>
       {/* ================= DESKTOP NAVBAR ================= */}
-      <nav className="sticky top-0 z-50 border-b bg-white hidden md:block">
+      <nav className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur hidden md:block">
         <div className="mx-auto max-w-7xl px-6 flex items-center justify-between h-14">
           {/* LEFT */}
           <div className="flex items-center gap-6 text-sm">
@@ -179,7 +179,7 @@ const resetLibrary = useLibraryStore((state) => state.resetLibrary);
       </nav>
 
       {/* ================= MOBILE TOP BAR ================= */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b md:hidden">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur  border-b md:hidden">
         <div className="px-3 h-14 flex items-center gap-2">
           <Link href="/" className="text-xl font-bold whitespace-nowrap">
             MyMeta
@@ -220,7 +220,7 @@ const resetLibrary = useLibraryStore((state) => state.resetLibrary);
       </nav>
 
       {/* ================= MOBILE BOTTOM NAV ================= */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t shadow md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/80 backdrop-blur  border-t shadow md:hidden">
         <div className="flex items-center justify-around h-16">
           {navItems.map((item) => {
             const Icon = item.icon;

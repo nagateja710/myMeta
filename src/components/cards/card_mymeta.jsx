@@ -67,7 +67,7 @@ export default function Card({ item, onEdit, onUpdated, onDeleted }) {
 
   // Generic update → DOES NOT touch updated_at
   async function update(data) {
-    const updated = await apiFetch(`/user-media/${item.id}/`, {
+    const updated = await apiFetch(`/api/user-media/${item.id}/`, {
       method: "PATCH",
       body: JSON.stringify(data),
     });
@@ -77,7 +77,7 @@ export default function Card({ item, onEdit, onUpdated, onDeleted }) {
 
   // Rating update → ONLY place updated_at is changed
   async function updateRating(newRating) {
-    const updated = await apiFetch(`/user-media/${item.id}/`, {
+    const updated = await apiFetch(`/api/user-media/${item.id}/`, {
       method: "PATCH",
       body: JSON.stringify({
         rating: newRating,
@@ -91,7 +91,7 @@ export default function Card({ item, onEdit, onUpdated, onDeleted }) {
   async function remove() {
     if (!confirm("Delete this item?")) return;
 
-    await apiFetch(`/user-media/${item.id}/`, {
+    await apiFetch(`/api/user-media/${item.id}/`, {
       method: "DELETE",
     });
 
@@ -99,7 +99,7 @@ export default function Card({ item, onEdit, onUpdated, onDeleted }) {
   }
 
   return (
-    <div className="group w-50 h-75 rounded-lg border bg-white p-4 flex flex-col items-center text-center relative">
+    <div className="group w-50 h-75 rounded-lg border bg-white/90 backdrop-blur shadow-lg p-4 flex flex-col items-center text-center relative">
       {/* ✏️ EDIT */}
       {pathname !== "/" && (
         <button
@@ -276,7 +276,7 @@ export default function Card({ item, onEdit, onUpdated, onDeleted }) {
       </div>
 
       {/* TITLE */}
-      <h3 className="font-semibold text-sm leading-tight line-clamp-2">
+      <h3 className="font-semibold text-sm leading-tight line-clamp-2 text-black ">
         {item.media?.title}
       </h3>
 

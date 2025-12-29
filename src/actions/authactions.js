@@ -1,9 +1,11 @@
 "use client";
 
-const API_BASE = "http://127.0.0.1:8000/api";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL;
+// console.log(API_BASE);
 
 export async function loginUser(username, password) {
-  const res = await fetch(`${API_BASE}/auth/login/`, {
+  // console.log(API_BASE);
+  const res = await fetch(`${API_BASE}/api/auth/login/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password }),
