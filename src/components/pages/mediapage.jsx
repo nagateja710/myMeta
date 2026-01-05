@@ -9,6 +9,11 @@ import { useLibraryStore } from "@/store/useLibraryStore";
 /* -----------------------------
    🎨 BACKGROUND CONFIGS
 -------------------------------- */
+const getRandomItem = (items) => {
+  if (items.length === 0) return null;
+  return items[Math.floor(Math.random() * items.length)];
+};
+
 const BACKGROUND_STYLES = {
   anime: {
     bgClass: "bg-gradient-to-br from-amber-950 via-yellow-950 to-zinc-950",
@@ -151,6 +156,54 @@ const restItems = useMemo(
   [filteredItems]
 );
 
+const featuredItems = useMemo(() => {
+  const featured = [];
+
+
+  
+  // 1. All "doing" items
+  doingItems.forEach(item => {
+    featured.push({ ...item, featuredTag: "LIVE" });
+  });
+  
+  // 2. Recently completed (1 item)
+  const recentCompleted = filteredItems
+    .filter((i) => i.status === "completed")
+    .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
+    [0];
+  
+  if (recentCompleted) {
+    featured.push({ ...recentCompleted, featuredTag: "RECENT" });
+  }
+  
+  // 3. Top rated item
+  const topRated = getRandomItem(filteredItems
+    .filter((i) => i.rating && i.rating ===5)
+    .sort((a, b) => (b.rating || 0) - (a.rating || 0)));
+  
+  if (topRated && !featured.find(f => f.id === topRated.id)) {
+    featured.push({ ...topRated, featuredTag: "TOP RATED" });
+  }
+
+
+const todoItem = getRandomItem(
+  filteredItems.filter((i) => i.status === "todo" && !featured.find(f => f.id === i.id))
+);
+
+  
+  if (todoItem) {
+    featured.push({ ...todoItem, featuredTag: "UP NEXT" });
+  }
+  
+  return featured;
+}, [filteredItems, doingItems]);
+
+const TAG_COLORS = {
+  "LIVE": "bg-red-500/80 text-white",
+  "RECENT": "bg-green-500/80 text-white",
+  "TOP RATED": "bg-yellow-500/80 text-yellow-900",
+  "UP NEXT": "bg-purple-500/80 text-white"
+};
 
   if (!hydrated) {
     return (
@@ -184,31 +237,34 @@ const restItems = useMemo(
         )}
 
 {/* DOING ROW (HORIZONTAL SCROLL) */}
-{doingItems.length > 0 && (
-  <div className="px-6 pb-2">
+{featuredItems.length > 0 && (
+  <div className="px-6 py-2  bg-black/20 rounded-lg border border-white/30">
     <h2 className="text-sm font-semibold text-gray-200 mb-2">
-      In Progress
-    </h2>
+     Featured
+     </h2>
 
     <div
       className="
-        flex gap-20
-        md:gap-8
+        flex 
+        gap-4
         overflow-x-auto
-        p-4
+        py-2
         rounded-lg
         scrollbar-hide
         snap-x snap-mandatory
-        bg-white/40
+
       "
     >
-      {doingItems.map((item) => (
-        <div key={item.id} className="snap-start shrink-0 w-[150px] md:w-[180px]">
+
+      {featuredItems.map((item) => (
+        <div key={item.id} className="snap-start shrink-0 w-45">
           <Card
             item={item}
             onEdit={() => setEditingItem(item)}
             onUpdated={(u) => updateItem(item.id, u)}
             onDeleted={(id) => removeItem(id)}
+            tag={item.featuredTag}
+            tagcol={TAG_COLORS[item.featuredTag]}
           />
         </div>
       ))}
@@ -217,7 +273,16 @@ const restItems = useMemo(
 )}
 
         {/* GRID */}
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-6 p-6">
+      <div
+  className="
+    grid
+    [grid-template-columns:repeat(auto-fit,minmax(160px,1fr))]
+    gap-4
+    p-2
+    max-w-full
+    overflow-x-hidden
+  "
+>
           {restItems.map((item) => (
             <Card
               key={item.id}

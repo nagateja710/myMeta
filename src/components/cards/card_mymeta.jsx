@@ -50,14 +50,21 @@ const TYPE_COLORS = {
   game: "bg-gray-500/70 text-white",
   book: "bg-blue-500/70 text-white",
 };
+const pagetypep={
+  multi:"top-16",
+  solo:"top-10",
+}
 
-export default function Card({ item, onEdit, onUpdated, onDeleted }) {
+export default function Card({ item, onEdit, onUpdated, onDeleted ,tag=null,tagcol=null}) {
   const pathname = usePathname();
-
+  // console.log(tag);
+  // const tag={tag};
   /* --------- DATA --------- */
   const status = item.status || "todo";
   const rating = item.rating || 0;
   const updatedAt = item.updated_at;
+  const pagetype=pagetypep[pathname.split('/')[1]];
+  
 
   const progress = item.progress_watched || 0;
   const total = item.progress_total || 0;
@@ -72,6 +79,7 @@ export default function Card({ item, onEdit, onUpdated, onDeleted }) {
   const [showRatingMenu, setShowRatingMenu] = useState(false);
   const [showAiringMenu, setShowAiringMenu] = useState(false);
   const [showProgressSlider, setShowProgressSlider] = useState(false);
+
 
   /* --------- API HELPERS --------- */
 
@@ -110,7 +118,7 @@ export default function Card({ item, onEdit, onUpdated, onDeleted }) {
   return (
     <div
       ref={cardRef}
-      className="group w-50 h-75 rounded-lg border bg-white/90 backdrop-blur shadow-lg p-4 flex flex-col items-center text-center relative"
+      className="group min-w-0 w-50 max-w-full h-75 rounded-lg border bg-white/90 backdrop-blur shadow-lg p-4 flex flex-col items-center text-center relative"
     >
       {/* ✏️ EDIT */}
       {pathname !== "/" && (
@@ -137,6 +145,8 @@ export default function Card({ item, onEdit, onUpdated, onDeleted }) {
         </div>
       )}
 
+
+
       {/* PROGRESS (ring + toggle slider) */}
       {pathname !== "/" && (
         <div className="absolute top-2 left-1 z-30 flex flex-col items-center gap-2">
@@ -160,7 +170,17 @@ export default function Card({ item, onEdit, onUpdated, onDeleted }) {
           )}
         </div>
       )}
-
+      
+     {/* TAG */}
+      {tag!==null && (
+        <div
+          className={`absolute ${pagetype} right-2 z-20 text-[9px] px-3 py-1 font-medium uppercase rounded-lg backdrop-blur ${
+            tagcol || "bg-gray-400 text-white"
+          }`}
+        >
+          {tag}
+        </div>
+      )}
       {/* AIRING STATUS (anime page only) */}
       {pathname.split("/")[1] === "multi" && airing && (
         <div className="absolute top-9 right-2 z-20">
@@ -176,6 +196,7 @@ export default function Card({ item, onEdit, onUpdated, onDeleted }) {
           >
             {AIRING_LABELS[airing]}
           </button>
+        
 
           {showAiringMenu && (
             <div className="absolute right-0 mt-1 w-32 bg-white border rounded shadow z-30 overflow-hidden">
@@ -195,6 +216,7 @@ export default function Card({ item, onEdit, onUpdated, onDeleted }) {
           )}
         </div>
       )}
+
 
       {/* STATUS / RATING */}
       <div className="absolute top-2 right-2 z-20">

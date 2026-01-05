@@ -202,7 +202,7 @@ export default function Navbar() {
       </nav>
 
       {/* ================= MOBILE TOP BAR ================= */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur border-b md:hidden">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur border-b md:hidden pb-2">
         <div className="px-3 h-14 flex items-center gap-2">
           <Link href="/" className="text-xl font-bold">
             MyMeta
