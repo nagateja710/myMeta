@@ -15,6 +15,7 @@ import {
   LogIn,
   UserPlus,
   LogOut,
+  TvMinimalPlay,
 } from "lucide-react";
 
 import { useAuthStore } from "@/store/useAuthStore";
@@ -26,7 +27,7 @@ import { useLibraryStore } from "@/store/useLibraryStore";
 const navItems = [
   { key: "books", label: "Books", path: "/solo/books", icon: Book },
   { key: "movies", label: "Movies", path: "/solo/movies", icon: Film },
-  { key: "series", label: "Series", path: "/multi/series", icon: Tv },
+  { key: "series", label: "Series", path: "/multi/series", icon: TvMinimalPlay },
   { key: "anime", label: "Anime", path: "/multi/anime", icon: Tv },
   
   { key: "games", label: "Games", path: "/solo/games", icon: Gamepad2 },
