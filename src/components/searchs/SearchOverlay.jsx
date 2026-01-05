@@ -4,7 +4,8 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import AdvancedAddInline from "../cards/AdvancedAddInline";
-import { apiFetch } from "@/lib/api";
+import { addToLibrary } from "@/actions/libraryactions";
+
 import { useLibraryStore } from "@/store/useLibraryStore";
 
 function safeYear(year) {
@@ -38,7 +39,7 @@ function normalizeItem(item) {
 
 export default function SearchOverlay({ loading, results }) {
   const pathname = usePathname();
-  const section= pathname === "/anime" ? pathname.slice(1) : pathname.slice(1, -1);
+  const section= pathname.split('/')[1] === "multi" ? pathname.split('/')[2] : pathname.split('/')[2].slice(0, -1);
   const addItem = useLibraryStore((s) => s.addItem);
 
   const [advancedItem, setAdvancedItem] = useState(null);
@@ -48,30 +49,26 @@ export default function SearchOverlay({ loading, results }) {
      ⚡ QUICK ADD
      ========================= */
     // console.log(section,section==='anime');
-  async function quickAdd(item) {
-    try {
-      setAddingId(item.id);
+async function quickAdd(item) {
+  try {
+    setAddingId(item.id);
 
-      const created = await apiFetch("/api/add-to-library/", {
-        method: "POST",
-        body: JSON.stringify({
-          type: section,
-          
-          title: item.title,
-          synopsis: item.subtitle,
-          release_year: safeYear(item.year),
-          cover_url: item.cover,
-        }),
-      });
+    const created = await addToLibrary({
+      type: section,
+      title: item.title,
+      synopsis: item.subtitle,
+      release_year: safeYear(item.year),
+      cover_url: item.cover,
+    });
 
-      // 🔥 PUSH INTO GLOBAL STORE
-      addItem(normalizeItem(created));
-    } catch (err) {
-      console.warn("Already in library or failed:", err.message);
-    } finally {
-      setAddingId(null);
-    }
+    addItem(normalizeItem(created));
+  } catch (err) {
+    console.warn("Already in library or failed:", err.message);
+  } finally {
+    setAddingId(null);
   }
+}
+
 
   /* =========================
      🔥 ADVANCED ADD VIEW

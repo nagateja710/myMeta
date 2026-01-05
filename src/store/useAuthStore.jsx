@@ -5,7 +5,7 @@ export const useAuthStore = create(
   persist(
     (set) => ({
       user: null,
-      hasHydrated: false, // 🔥 ADD THIS
+      hasHydrated: false,
 
       login: (userData) => {
         set({ user: userData });
@@ -16,12 +16,19 @@ export const useAuthStore = create(
         localStorage.removeItem("refreshToken");
         set({ user: null });
       },
+
+      // 🔥 ADD this setter function
+      setHasHydrated: (hydrated) => {
+        set({ hasHydrated: hydrated });
+      },
     }),
     {
       name: "mymeta-auth",
-      partialize: (state) => ({ user: state.user }),
+      partialize: (state) => ({ user: state.user }), // Only persist user
       onRehydrateStorage: () => (state) => {
-        state.hasHydrated = true; // 🔥 MARK READY
+        if (state) {
+          state.setHasHydrated(true); // ✅ Call the setter
+        }
       },
     }
   )

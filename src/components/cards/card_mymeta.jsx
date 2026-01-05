@@ -1,12 +1,18 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+
 import { usePathname } from "next/navigation";
 import { apiFetch } from "@/lib/api";
 import SeasonProgressRing from "../SeasonProgressRing";
 import { Pen } from "lucide-react";
-
+import {
+  updateUserMedia,
+  deleteUserMedia,
+  updateUserMediaRating,
+} from "@/actions/libraryactions";
+import ProgressSlider from "../progressslider_v";
 /* ---------------- STATUS ---------------- */
 
 const STATUS_LABELS = {
@@ -40,6 +46,7 @@ const AIRING_COLORS = {
 const TYPE_COLORS = {
   anime: "bg-yellow-500/80 text-white",
   movie: "bg-purple-500/70 text-white",
+  series: "bg-pink-700/70 text-white",
   game: "bg-gray-500/70 text-white",
   book: "bg-blue-500/70 text-white",
 };
@@ -58,48 +65,53 @@ export default function Card({ item, onEdit, onUpdated, onDeleted }) {
   const type = item.media?.type;
   const airing = item.airing_status;
 
+  const cardRef = useRef(null);
+
   /* --------- UI STATE --------- */
   const [showStatusMenu, setShowStatusMenu] = useState(false);
   const [showRatingMenu, setShowRatingMenu] = useState(false);
   const [showAiringMenu, setShowAiringMenu] = useState(false);
+  const [showProgressSlider, setShowProgressSlider] = useState(false);
 
   /* --------- API HELPERS --------- */
 
-  // Generic update → DOES NOT touch updated_at
   async function update(data) {
-    const updated = await apiFetch(`/api/user-media/${item.id}/`, {
-      method: "PATCH",
-      body: JSON.stringify(data),
-    });
-
+    const updated = await updateUserMedia(item.id, data);
     onUpdated?.(updated);
   }
 
-  // Rating update → ONLY place updated_at is changed
   async function updateRating(newRating) {
-    const updated = await apiFetch(`/api/user-media/${item.id}/`, {
-      method: "PATCH",
-      body: JSON.stringify({
-        rating: newRating,
-        updated_at: new Date().toISOString(),
-      }),
-    });
-
+    const updated = await updateUserMediaRating(item.id, newRating);
     onUpdated?.(updated);
   }
 
   async function remove() {
     if (!confirm("Delete this item?")) return;
-
-    await apiFetch(`/api/user-media/${item.id}/`, {
-      method: "DELETE",
-    });
-
+    await deleteUserMedia(item.id);
     onDeleted?.(item.id);
   }
 
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (cardRef.current && !cardRef.current.contains(e.target)) {
+        setShowProgressSlider(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="group w-50 h-75 rounded-lg border bg-white/90 backdrop-blur shadow-lg p-4 flex flex-col items-center text-center relative">
+    <div
+      ref={cardRef}
+      className="group w-50 h-75 rounded-lg border bg-white/90 backdrop-blur shadow-lg p-4 flex flex-col items-center text-center relative"
+    >
       {/* ✏️ EDIT */}
       {pathname !== "/" && (
         <button
@@ -125,15 +137,32 @@ export default function Card({ item, onEdit, onUpdated, onDeleted }) {
         </div>
       )}
 
-      {/* PROGRESS RING */}
+      {/* PROGRESS (ring + toggle slider) */}
       {pathname !== "/" && (
-        <div className="absolute top-2 left-2 z-30">
-          <SeasonProgressRing watched={progress} total={total} />
+        <div className="absolute top-2 left-1 z-30 flex flex-col items-center gap-2">
+          {/* RING (click toggles slider) */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowProgressSlider((v) => !v);
+            }}
+          >
+            <SeasonProgressRing watched={progress} total={total} />
+          </button>
+
+          {/* SLIDER */}
+          {showProgressSlider && (
+            <ProgressSlider
+              watched={progress}
+              total={total}
+              onCommit={(v) => update({ progress_watched: v })}
+            />
+          )}
         </div>
       )}
 
       {/* AIRING STATUS (anime page only) */}
-      {pathname === "/anime" && airing && (
+      {pathname.split("/")[1] === "multi" && airing && (
         <div className="absolute top-9 right-2 z-20">
           <button
             onClick={() => {
@@ -194,7 +223,7 @@ export default function Card({ item, onEdit, onUpdated, onDeleted }) {
         )}
 
         {/* STATUS MENU */}
-        {pathname!=="/" && showStatusMenu && (
+        {pathname !== "/" && showStatusMenu && (
           <div className="absolute right-0 mt-1 w-32 bg-white border rounded shadow z-30 overflow-hidden">
             {["todo", "doing", "completed"].map((s) => (
               <button
@@ -297,8 +326,12 @@ export default function Card({ item, onEdit, onUpdated, onDeleted }) {
       {/* UPDATED DATE (only meaningful for rating) */}
       {status === "completed" && updatedAt && (
         <div className="text-[8px] text-gray-500 absolute bottom-2 right-2 z-30">
-          <p className="pl-3">Rated on </p>
-          {new Date(updatedAt).toLocaleDateString()}
+          <p className="pl-1">Rated on </p>
+          {new Date(updatedAt).toLocaleDateString("en-US", {
+            day: "2-digit",
+            month: "short",
+            year: "2-digit",
+          })}
         </div>
       )}
     </div>

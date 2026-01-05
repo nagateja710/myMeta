@@ -1,24 +1,19 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-
+import { useMemo } from "react";
 import DashboardSection from "@/components/dashboard/DashboardSection";
 import DashboardStats from "@/components/dashboard/DashboardStats";
 import Card from "@/components/cards/card_mymeta";
-
-import { apiFetch } from "@/lib/api";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useLibraryStore } from "@/store/useLibraryStore";
 
 /* -----------------------------
    🔧 NORMALIZE BACKEND RESPONSE
 -------------------------------- */
 function normalizeItem(item) {
-  // Case A: already normalized
   if (typeof item.media === "object" && item.media !== null) {
     return item;
   }
 
-  // Case B: flat backend response
   if (item.media_type) {
     return {
       ...item,
@@ -32,46 +27,17 @@ function normalizeItem(item) {
     };
   }
 
-  // Case C: fallback
   return item;
 }
 
 export default function Home() {
-  const user = useAuthStore((s) => s.user);
-  const hasHydrated = useAuthStore((s) => s.hasHydrated);
-
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  /* =========================
-     FETCH FROM BACKEND
-     ========================= */
-  useEffect(() => {
-    if (!hasHydrated) return;
-    if (!user) {
-      setLoading(false);
-      return;
-    }
-
-    async function loadLibrary() {
-      try {
-        const data = await apiFetch("/api/user-media/");
-        console.log("RAW USER MEDIA:", data);
-        setItems(data.map(normalizeItem)); // 🔥 FIX
-      } catch (err) {
-        console.error("Failed to load library", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadLibrary();
-  }, [hasHydrated, user]);
+  // 🔥 USE LIBRARY STORE INSTEAD OF FETCHING
+  const items = useLibraryStore((s) => s.items || []);
+  const hydrated = useLibraryStore((s) => s.hydrated);
 
   /* =========================
      DERIVED VIEWS
      ========================= */
-
   const continueItems = useMemo(
     () => items.filter((i) => i.status === "doing"),
     [items]
@@ -80,11 +46,11 @@ export default function Home() {
   const completedItems = useMemo(() => {
     return items
       .filter((i) => i.status === "completed")
-      .sort(
-        (a, b) =>
-          new Date(b.updated_at).getTime() -
-          new Date(a.updated_at).getTime()
-      );
+      .sort((a, b) => {
+        const ta = a.updated_at ? new Date(a.updated_at).getTime() : 0;
+        const tb = b.updated_at ? new Date(b.updated_at).getTime() : 0;
+        return tb - ta;
+      });
   }, [items]);
 
   const topRatedItems = useMemo(
@@ -106,10 +72,9 @@ export default function Home() {
   /* =========================
      LOADING STATE
      ========================= */
-  if (loading) {
+  if (!hydrated) {
     return (
       <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-zinc-950 via-zinc-900 to-black flex items-center justify-center">
-        {/* BACKGROUND DECOR */}
         <div className="absolute inset-0">
           <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-indigo-500/20 blur-3xl" />
           <div className="absolute top-1/3 -right-24 h-96 w-96 rounded-full bg-fuchsia-500/20 blur-3xl" />
@@ -126,7 +91,6 @@ export default function Home() {
   if (!hasDashboardItems) {
     return (
       <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-zinc-950 via-zinc-900 to-black text-white">
-        {/* BACKGROUND DECOR */}
         <div className="absolute inset-0">
           <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-indigo-500/20 blur-3xl" />
           <div className="absolute top-1/3 -right-24 h-96 w-96 rounded-full bg-fuchsia-500/20 blur-3xl" />
@@ -162,7 +126,6 @@ export default function Home() {
      ========================= */
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-zinc-950 via-zinc-900 to-black text-white">
-      {/* BACKGROUND DECOR */}
       <div className="absolute inset-0">
         <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-indigo-500/20 blur-3xl" />
         <div className="absolute top-1/3 -right-24 h-96 w-96 rounded-full bg-fuchsia-500/20 blur-3xl" />

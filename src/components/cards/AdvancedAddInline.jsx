@@ -2,9 +2,15 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { apiFetch } from "@/lib/api";
+import {
+  addToLibrary,
+  updateUserMedia,
+  deleteUserMedia,
+} from "@/actions/libraryactions";
+
 import { Trash2} from "lucide-react";
 // import {save}
+import ProgressSlider from "../progressSlider";
 export default function AdvancedAddInline({
   item,
   mode = "edit", // "add" | "edit"
@@ -21,7 +27,7 @@ export default function AdvancedAddInline({
     status: item.status || "todo",
     rating: item.rating || 0,
     progress_watched: item.progress_watched || 0,
-    progress_total: item.progress_total || 0,
+    progress_total: item.progress_total || 100,
 
     synopsis: item.synopsis || "",
     notes: item.notes || "",
@@ -52,88 +58,94 @@ export default function AdvancedAddInline({
     }));
   }
 
-  function buildUpdatedAt() {
-    if (!form.updated_date) return null;
+function buildUpdatedAt() {
+  if (!form.updated_date) return null;
 
     const now = new Date();
     const time = now.toTimeString().slice(0, 8); // HH:mm:ss
-    return `${form.updated_date}T${time}Z`;
-  }
+   return `${form.updated_date}T00:00:00`;
+
+}
+
+
+
+
 
   /* ---------------- SAVE ---------------- */
 
-  async function save() {
-    setSaving(true);
-    try {
-      /* ======================
-         ADD TO LIBRARY
-         ====================== */
-      if (mode === "add") {
-        const created = await apiFetch("/api/add-to-library/", {
-          method: "POST",
-          body: JSON.stringify({
-            title: media.title,
-            type: media.type,
-            release_year: media.release_year,
-            cover_url: media.cover_url,
+async function save() {
+  setSaving(true);
+  try {
+    /* ======================
+       ADD TO LIBRARY
+       ====================== */
+if (mode === "add") {
+  const payload = {
+    title: media.title,
+    type: media.type,
+    release_year: media.release_year,
+    cover_url: media.cover_url,
 
-            status: form.status,
-            rating: form.rating,
-            progress_watched: Number(form.progress_watched) || 0,
-            progress_total: Number(form.progress_total) || 0,
+    status: form.status,
+    rating: form.rating,
+    progress_watched: Number(form.progress_watched) || 0,
+    progress_total: Number(form.progress_total) || 0,
+    synopsis: form.synopsis,
+    notes: form.notes,
+  };
 
-            synopsis: form.synopsis,
-            notes: form.notes,
-          }),
-        });
+  const updatedAt = buildUpdatedAt();
+  if (updatedAt) {
+    payload.updated_at = updatedAt; // 🔥 THIS FIXES IT
+  }
 
-        onSaved?.(created);
+  const created = await addToLibrary(payload);
+  onSaved?.(created);
+}
+
+    /* ======================
+       UPDATE USER MEDIA
+       ====================== */
+    if (mode === "edit") {
+      const payload = {
+        status: form.status,
+        rating: form.status === "todo" ? 0 : form.rating,
+        progress_watched: Number(form.progress_watched) || 0,
+        progress_total: Number(form.progress_total) || 0,
+        synopsis: form.synopsis,
+        notes: form.notes,
+      };
+
+      const updatedAt = buildUpdatedAt();
+      if (updatedAt) {
+        payload.updated_at = updatedAt;
       }
 
-      /* ======================
-         UPDATE USER MEDIA
-         ====================== */
-      if (mode === "edit") {
-        const payload = {
-          status: form.status,
-          rating: form.status === "todo" ? 0 : form.rating,
-          progress_watched: Number(form.progress_watched) || 0,
-          progress_total: Number(form.progress_total) || 0,
-
-          synopsis: form.synopsis,
-          notes: form.notes,
-        };
-
-        // 🔥 updated_at ONLY if rating/date provided
-        const updatedAt = buildUpdatedAt();
-        if (updatedAt) {
-          payload.updated_at = updatedAt;
-        }
-
-        const updated = await apiFetch(`/api/user-media/${item.id}/`, {
-          method: "PATCH",
-          body: JSON.stringify(payload),
-        });
-
-        onSaved?.(updated);
-      }
-
-      onCancel();
-    } catch (err) {
-      console.error("Save failed", err);
-      alert("Failed to save changes");
-    } finally {
-      setSaving(false);
+      const updated = await updateUserMedia(item.id, payload);
+      onSaved?.(updated);
     }
-  }
 
-  async function remove() {
-    if (!confirm("Remove this from your library?")) return;
-
-    await apiFetch(`/api/user-media/${item.id}/`, { method: "DELETE" });
-    onSaved?.(null, item.id);
     onCancel();
+  } catch (err) {
+    console.error("Save failed", err);
+    alert("Failed to save changes");
+  } finally {
+    setSaving(false);
   }
+}
+
+
+
+
+
+async function remove() {
+  if (!confirm("Remove this from your library?")) return;
+
+  await deleteUserMedia(item.id);
+  onSaved?.(null, item.id);
+  onCancel();
+}
+
 
   /* ---------------- UI ---------------- */
 
@@ -172,6 +184,7 @@ export default function AdvancedAddInline({
     />
 
     {/* NOTES UNDER IMAGE */}
+        
     <div>
       <label className="block text-xs font-medium text-gray-600 mb-1">
         Notes
@@ -189,7 +202,7 @@ export default function AdvancedAddInline({
   </div>
 
   {/* RIGHT COLUMN */}
-  <div className="flex flex-col gap-4 min-w-0">
+  <div className="flex flex-col gap-2 min-w-0">
 
     {/* MEDIA INFO */}
     <div>
@@ -199,8 +212,8 @@ export default function AdvancedAddInline({
           {media.release_year}
         </p>
       )}
+      
     </div>
-
     {/* STATUS */}
     <div className="flex gap-1 flex-wrap">
       {["todo", "doing", "completed"].map((s) => (
@@ -217,7 +230,6 @@ export default function AdvancedAddInline({
         </button>
       ))}
     </div>
-
     {/* RATING */}
           {form.status === "completed" && (
       <div className="flex gap-0.5">
@@ -236,8 +248,25 @@ export default function AdvancedAddInline({
         ))}
       </div>
     )}
+  {/* UPDATED DATE */}
+     {form.status==="completed" && ( <div>
+        <label className="block text-xs font-medium text-gray-600 mb-1">
+          Rated on
+        </label>
+        <input
+          type="date"
+          value={form.updated_date}
+          onChange={(e) =>
+            setForm((f) => ({
+              ...f,
+              updated_date: e.target.value,
+            }))
+          }
+          className="w-full rounded-md border px-5 py-2 text-sm bg-white "
+        />
 
-    {/* SYNOPSIS (SMALL FIELD) */}
+      </div>)}
+ {/* SYNOPSIS (SMALL FIELD) */}
     <div className=" min-w-0">
       <label className="block text-xs font-medium text-gray-600 mb-1">
          (author / director / tags)
@@ -252,69 +281,29 @@ export default function AdvancedAddInline({
       />
     </div>
 
+
+
+   
+
     {/* DATE + PROGRESS (RIGHT OF NOTES) */}
     {/* <div className="grid gap-3 rounded-lg border bg-gray-50 p-3"> */}
 
-      {/* UPDATED DATE */}
-     {form.status==="completed" && ( <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">
-          Rated / Updated on
-        </label>
-        <input
-          type="date"
-          value={form.updated_date}
-          onChange={(e) =>
-            setForm((f) => ({
-              ...f,
-              updated_date: e.target.value,
-            }))
-          }
-          className="w-full rounded-md border px-3 py-2 text-sm bg-white"
-        />
-        {/* <p className="text-[11px] text-gray-400 mt-1">
-          Time is auto-filled
-        </p> */}
-      </div>)}
 
-      {/* PROGRESS */}
-      <div>
-        <p className="text-xs font-medium text-gray-600 mb-1">
-          Your progress
-        </p>
-        <div className="grid grid-cols-2 gap-2">
-          <input
-            type="number"
-            min="0"
-            placeholder="Watched"
-            value={form.progress_watched}
-            onChange={(e) =>
-              setForm((f) => ({
-                ...f,
-                progress_watched: e.target.value,
-              }))
-            }
-            className="border px-2 py-1.5 rounded text-sm"
-          />
-          <input
-            type="number"
-            min="0"
-            placeholder="Total"
-            value={form.progress_total}
-            onChange={(e) =>
-              setForm((f) => ({
-                ...f,
-                progress_total: e.target.value,
-              }))
-            }
-            className="border px-2 py-1.5 rounded text-sm"
-          />
-        </div>
-      {/* </div> */}
 
-    </div>
+
   </div>
 </div>
+      {/* PROGRESS */}
+      <div>
+        <p className="text-xs font-medium text-gray-900">Progress:</p>
+        <p className="text-xs font-medium text-gray-600 mb-1">
+          (% / pages / seasons / episodes)
+          {/* <p className="align-right">Set total </p> */}
+        </p>
+        <ProgressSlider form={form} setForm={setForm} />
 
+
+    </div>
       
 
       {/* ACTIONS */}

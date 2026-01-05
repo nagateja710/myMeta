@@ -12,9 +12,22 @@ export function LibraryHydrator() {
   const resetLibrary = useLibraryStore((s) => s.resetLibrary);
   const hydrateLibrary = useLibraryStore((s) => s.hydrateLibrary);
   const libraryHydrated = useLibraryStore((s) => s.hydrated);
+ // In useAuthStore
+const initializeUser = async () => {
+  const token = localStorage.getItem("accessToken");
+  if (token) {
+    try {
+      const decoded = jwtDecode(token);
+      set({ user: { username: decoded.username } });
+    } catch (err) {
+      console.error("Invalid token", err);
+    }
+  }
+};
 
   useEffect(() => {
     if (!authHydrated) return;
+
 
     // 🔒 User logged out → clear library
     if (!user) {

@@ -3,50 +3,12 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import SearchOverlay from "./SearchOverlay";
+import { SEARCH_CONFIG } from "@/utils/searchHelper";
 
-import {
-  mapBookResult,
-  mapMovieResult,
-  mapAnimeResult,
-  mapGameResult,
-} from "@/utils/searchHelper";
-
-const SEARCH_CONFIG = {
-  books: {
-    placeholder: "Search books...",
-    api: (q) =>
-      `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}`,
-    extract: (data) => (data.items || []).map(mapBookResult),
-  },
-
-  movies: {
-    placeholder: "Search movies...",
-    api: (q) =>
-      `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(
-        q
-      )}&api_key=${process.env.NEXT_PUBLIC_TMDB_KEY}`,
-    extract: (data) => (data.results || []).map(mapMovieResult),
-  },
-
-  anime: {
-    placeholder: "Search anime...",
-    api: (q) => `https://api.jikan.moe/v4/anime?q=${q}`,
-    extract: (data) => (data.data || []).map(mapAnimeResult),
-  },
-
-  games: {
-    placeholder: "Search games...",
-    api: (q) =>
-      `https://api.rawg.io/api/games?search=${encodeURIComponent(
-        q
-      )}&key=${process.env.NEXT_PUBLIC_RAWG_KEY}`,
-    extract: (data) => (data.results || []).map(mapGameResult),
-  },
-};
 
 export default function Search({ onAdd }) {
   const pathname = usePathname();
-  const section = pathname.split("/")[1];
+  const section = pathname.split("/")[2];
   const config = SEARCH_CONFIG[section];
 
   const [query, setQuery] = useState("");
@@ -64,7 +26,8 @@ export default function Search({ onAdd }) {
 
     setLoading(true);
     try {
-      const res = await fetch(config.api(q));
+     const res = await fetch(config.fetchUrl(q));
+
       const data = await res.json();
       setResults(config.extract(data));
     } catch (e) {

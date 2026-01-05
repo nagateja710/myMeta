@@ -54,14 +54,14 @@ export default function AboutPage() {
           {/* CTA */}
           <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/signin"
+              href="/auth/signin"
               className="rounded-lg bg-white px-6 py-3 text-sm font-semibold text-black hover:bg-gray-200 transition"
             >
               Sign in
             </Link>
 
             <Link
-              href="/signup"
+              href="/auth/signup"
               className="rounded-lg border border-white/20 px-6 py-3 text-sm font-semibold hover:bg-white/10 transition"
             >
               Create account

@@ -120,7 +120,7 @@ export default function SignupPage() {
           <p className="mt-6 text-center text-sm text-gray-400">
             Already have an account?{" "}
             <Link
-              href="/signin"
+              href="/auth/signin"
               className="font-medium text-white hover:underline"
             >
               Sign in
