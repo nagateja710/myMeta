@@ -16,8 +16,9 @@ function mapBookResult(book) {
 }
 
 /* ---------- MOVIES ---------- */
-function mapMovieResult(movie) {
+function mapMovieResult(movie) { 
   return {
+   
     id: movie.id,
     cover: movie.poster_path
       ? `https://image.tmdb.org/t/p/w200${movie.poster_path}`
@@ -43,6 +44,7 @@ function mapAnimeResult(anime) {
 
 /* ---------- GAMES ---------- */
 function mapGameResult(game) {
+  
   return {
     id: game.id,
     cover:
@@ -56,6 +58,7 @@ function mapGameResult(game) {
 
 /* ---------- SERIES / TV SHOWS ---------- */
 function mapSeriesResult(series) {
+  
   return {
     id: series.id,
     cover: series.poster_path

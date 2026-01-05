@@ -41,6 +41,7 @@ const initializeUser = async () => {
         try {
           const data = await apiFetch("/api/user-media/");
           hydrateLibrary(data);
+          // console.log(data);
         } catch (err) {
           console.error("Failed to hydrate library", err);
         }

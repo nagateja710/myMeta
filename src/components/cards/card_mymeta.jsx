@@ -149,7 +149,7 @@ export default function Card({ item, onEdit, onUpdated, onDeleted ,tag=null,tagc
 
       {/* PROGRESS (ring + toggle slider) */}
       {pathname !== "/" && (
-        <div className="absolute top-2 left-1 z-30 flex flex-col items-center gap-2">
+        <div className="absolute top-2 left-1 z-30 bg-white/40 backdrop-blur-lg rounded-full flex flex-col items-center gap-2">
           {/* RING (click toggles slider) */}
           <button
             onClick={(e) => {
