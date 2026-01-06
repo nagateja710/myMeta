@@ -2,13 +2,13 @@
    🔍 SEARCH CONFIG + HELPERS (SINGLE SOURCE OF TRUTH)
    ========================================================= */
 
+   const tempImg="/images/download.png"
 /* ---------- BOOKS ---------- */
 function mapBookResult(book) {
   return {
     id: book.id,
     cover:
-      book.volumeInfo?.imageLinks?.thumbnail ||
-      "/images/placeholder-book.png",
+      book.volumeInfo?.imageLinks?.thumbnail || tempImg,
     title: book.volumeInfo?.title || "Unknown title",
     subtitle: book.volumeInfo?.authors?.[0] || "Unknown author",
     year: book.volumeInfo?.publishedDate?.slice(0, 4) || "",
@@ -21,8 +21,7 @@ function mapMovieResult(movie) {
    
     id: movie.id,
     cover: movie.poster_path
-      ? `https://image.tmdb.org/t/p/w200${movie.poster_path}`
-      : "/images/placeholder-movie.png",
+      ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : tempImg,
     title: movie.title || movie.name,
     subtitle: "Movie",
     year: movie.release_date?.slice(0, 4) || "",
@@ -34,8 +33,7 @@ function mapAnimeResult(anime) {
   return {
     id: anime.mal_id,
     cover:
-      anime.images?.jpg?.image_url ||
-      "/images/placeholder-anime.png",
+      anime.images?.jpg?.image_url || tempImg,
     title: anime.title,
     subtitle: anime.studios?.[0]?.name || "Studio unknown",
     year: anime.year || "",
@@ -48,8 +46,7 @@ function mapGameResult(game) {
   return {
     id: game.id,
     cover:
-      game.background_image ||
-      "/images/placeholder-game.png",
+      game.background_image || tempImg,
     title: game.name,
     subtitle: "Game",
     year: game.released?.slice(0, 4) || "",
@@ -63,7 +60,7 @@ function mapSeriesResult(series) {
     id: series.id,
     cover: series.poster_path
       ? `https://image.tmdb.org/t/p/w200${series.poster_path}`
-      : "/images/placeholder-series.png",
+      : "public\images\download.png",
     title: series.name,
     subtitle: "TV Series",
     year: series.first_air_date?.slice(0, 4) || "",
