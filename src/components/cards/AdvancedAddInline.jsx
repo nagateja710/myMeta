@@ -180,7 +180,8 @@ async function remove() {
       alt={media.title}
       width={120}
       height={180}
-      className="rounded-md object-cover"
+      className="rounded-md object-cover aspect-[2/3] "
+      unoptimized
     />
 
     {/* NOTES UNDER IMAGE */}

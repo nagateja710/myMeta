@@ -323,6 +323,7 @@ export default function Card({ item, onEdit, onUpdated, onDeleted ,tag=null,tagc
           fill
           className="object-cover"
           sizes="120px"
+          unoptimized
         />
       </div>
 

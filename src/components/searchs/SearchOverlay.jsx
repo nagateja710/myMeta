@@ -112,7 +112,8 @@ async function quickAdd(item) {
               alt={item.title}
               width={40}
               height={60}
-              className="rounded object-cover shrink-0"
+              className="rounded object-cover shrink-0 aspect-[2/3]"
+              unoptimized
             />
 
             <div className="flex flex-col flex-1 text-sm">
