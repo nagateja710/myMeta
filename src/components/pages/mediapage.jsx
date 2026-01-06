@@ -33,7 +33,7 @@ export default function MediaPage({ type }) {
   const {
     selectedStatuses,
     selectedRatings,
-    selectedAiringStatuses,
+    selectedAiringStatuses, 
     toggleStatus,
     toggleRating,
     toggleAiringStatus,

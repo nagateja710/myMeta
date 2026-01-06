@@ -5,9 +5,9 @@ export function useMediaSort(items, sortBy) {
   const groupByYear = (items) => {
     const grouped = {};
     items.forEach((item) => {
-      const year = item.updated_at
-        ? new Date(item.updated_at).getFullYear()
-        : "Unknown";
+      const year = item.updated_at  && item.status==="completed"
+        ? new Date(item.updated_at).getFullYear() 
+        : "Not Rated";
       if (!grouped[year]) grouped[year] = [];
       grouped[year].push(item);
     });

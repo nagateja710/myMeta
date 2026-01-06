@@ -6,7 +6,13 @@ const TAG_COLORS = {
   RECENT: "bg-green-500/80 text-white",
   "TOP RATED": "bg-yellow-500/80 text-yellow-900",
   "UP NEXT": "bg-purple-500/80 text-white",
+  "LONG BREAK":"bg-lime-500/80 text-white"
+
 };
+
+function getTagColor(tag) {
+  return TAG_COLORS[tag] || "bg-sky-500/80 text-white";
+}
 
 export default function FeaturedSection({ 
   featuredItems, 
@@ -39,7 +45,7 @@ export default function FeaturedSection({
               onUpdated={(u) => updateItem(item.id, u)}
               onDeleted={(id) => removeItem(id)}
               tag={item.featuredTag}
-              tagcol={TAG_COLORS[item.featuredTag]}
+              tagcol={getTagColor(item.featuredTag)}
             />
           </div>
         ))}
