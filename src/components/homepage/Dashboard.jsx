@@ -53,10 +53,16 @@ export default function Home() {
       });
   }, [items]);
 
-  const topRatedItems = useMemo(
-    () => items.filter((i) => i.rating === 5),
-    [items]
-  );
+  const topRatedItems = useMemo(() => {
+   return items
+      .filter((i) => i.rating === 5)
+      .sort((a, b) => {
+        const ta = a.updated_at ? new Date(a.updated_at).getTime() : 0;
+        const tb = b.updated_at ? new Date(b.updated_at).getTime() : 0;
+        return tb - ta;
+      });
+  }, [items]);
+
 
   const todoItems = useMemo(
     () => items.filter((i) => i.status === "todo"),
@@ -148,7 +154,7 @@ export default function Home() {
         </DashboardSection>
 
         <DashboardSection title="Recently Completed">
-          {completedItems.map((item) => (
+          {completedItems.slice(0, 10).map((item) => (
             <Card key={item.id} item={item} />
           ))}
         </DashboardSection>

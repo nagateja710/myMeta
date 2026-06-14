@@ -52,7 +52,7 @@ export default function DashboardStats({ items }) {
         <RotatingText
         
           text={["LIFETIME","LIFETIME COMPLETED", "THIS YEAR COMPLETED"]}
-          duration={4000}
+          duration={6000}
           transition={{ duration: 0.5, ease: "easeInOut" }}
           className="inline-block text-violet-300 font-semibold"
         />
@@ -62,9 +62,9 @@ export default function DashboardStats({ items }) {
       <div className="grid grid-cols-2 md:grid-cols-6 gap-2">
         <div  className="bg-white/30 rounded-lg border p-2 text-center">
         <div className="text-3xl font-bold text-rose-400">
-                         <RotatingText
+                  <RotatingText
                 text={[lifetime,lifetime_completed, year]}
-                duration={4000}
+                duration={6000}
                 transition={{ duration: 0.5, ease: "easeInOut" }}
                 y={-20}
               />
@@ -80,7 +80,7 @@ export default function DashboardStats({ items }) {
             <div className="text-2xl font-bold text-violet-300">
               <RotatingText
                 text={[s.lifetime.toString(),s.completed.toString(), s.year.toString()]}
-                duration={4000}
+                duration={6000}
                 transition={{ duration: 0.5, ease: "easeInOut" }}
                 y={-20}
               />

@@ -148,7 +148,7 @@ export default function Card({ item, onEdit, onUpdated, onDeleted ,tag=null,tagc
 
 
       {/* PROGRESS (ring + toggle slider) */}
-      {pathname !== "/" && (
+      {pathname.startsWith("/multi") && (
         <div className="absolute top-2 left-1 z-30 bg-white/40 backdrop-blur-lg rounded-full flex flex-col items-center gap-2">
           {/* RING (click toggles slider) */}
           <button

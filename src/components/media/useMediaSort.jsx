@@ -2,6 +2,14 @@
 import { useMemo } from "react";
 
 export function useMediaSort(items, sortBy) {
+  const sortByUpdatedAt = (items) => {
+  return [...items].sort((a, b) => {
+    const dateA = a.updated_at ? new Date(a.updated_at).getTime() : 0;
+    const dateB = b.updated_at ? new Date(b.updated_at).getTime() : 0;
+    return dateB - dateA; // newest first
+  });
+};
+
   const groupByYear = (items) => {
     const grouped = {};
     items.forEach((item) => {
@@ -16,13 +24,13 @@ export function useMediaSort(items, sortBy) {
 
   const groupByStatus = (items) => {
     const grouped = {
-      todo: [],
       doing: [],
       "5star": [],
       "4star": [],
       "3star": [],
       "2star": [],
-      "1star": [],
+      "1star": [],todo: [],
+      
       unrated: [],
     };
 
@@ -40,6 +48,29 @@ export function useMediaSort(items, sortBy) {
 
     return grouped;
   };
+   const groupByRatings =  (items) =>{
+        const grouped = {
+      "5star": [],
+      "4star": [],
+      "3star": [],
+      "2star": [],
+      "1star": [],
+      unrated: [],
+    };
+
+    items.forEach((item) => {
+      // if (item.status !== "completed") {
+      //   grouped.todo.push(item);
+      // } else 
+        if (item.rating) {
+        grouped[`${item.rating}star`].push(item);
+      } else {
+        grouped.unrated.push(item);
+      }
+    });
+
+    return grouped;
+   }
 
   const groupByAiringStatus = (items) => {
     const grouped = {
@@ -67,6 +98,10 @@ export function useMediaSort(items, sortBy) {
     }
 
     if (sortBy === "status") {
+        const sorted = sortByUpdatedAt(items);
+      return groupByStatus(sorted);
+    }
+    if (sortBy === "ratings") {
       return groupByStatus(items);
     }
 
@@ -75,7 +110,8 @@ export function useMediaSort(items, sortBy) {
     }
 
     if (sortBy === "updated_at") {
-      return groupByYear(items);
+       const sorted = sortByUpdatedAt(items);
+      return groupByYear(sorted);
     }
 
     return { none: items };
