@@ -1,11 +1,26 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 import { loginUser } from "@/actions/authactions";
 
 export default function SigninPage() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [seconds, setSeconds] = useState(0);
+
+  useEffect(() => {
+    let interval;
+
+    if (isLoading) {
+      interval = setInterval(() => {
+        setSeconds((prev) => prev + 1);
+      }, 1000);
+    }
+
+    return () => clearInterval(interval);
+  }, [isLoading]);
+
   const router = useRouter();
   const login = useAuthStore((s) => s.login);
 
@@ -16,26 +31,27 @@ export default function SigninPage() {
   async function handleLogin(e) {
     e.preventDefault();
     setError("");
+    setSeconds(0);
+    setIsLoading(true);
 
     try {
       const data = await loginUser(username, password);
 
-      // store tokens
       localStorage.setItem("accessToken", data.access);
       localStorage.setItem("refreshToken", data.refresh);
 
-      // update store
       login({ username });
 
       router.push("/");
     } catch (err) {
       setError("Invalid username or password");
+    } finally {
+      setIsLoading(false);
     }
   }
 
   return (
-  <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-zinc-950 via-zinc-900 to-black text-white">
-      
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-zinc-950 via-zinc-900 to-black text-white">
       {/* BACKGROUND GLOW */}
       <div className="absolute inset-0">
         <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-indigo-500/20 blur-3xl" />
@@ -50,9 +66,7 @@ export default function SigninPage() {
         >
           {/* HEADER */}
           <div className="mb-6 text-center">
-            <h1 className="text-2xl font-bold tracking-tight">
-              Welcome back
-            </h1>
+            <h1 className="text-2xl font-bold tracking-tight">Welcome back</h1>
             <p className="mt-1 text-sm text-gray-400">
               Sign in to continue tracking
             </p>
@@ -89,16 +103,17 @@ export default function SigninPage() {
           {/* BUTTON */}
           <button
             type="submit"
-            className="mt-6 w-full rounded-lg bg-white py-2.5 text-sm font-semibold text-black transition hover:bg-gray-200"
+            disabled={isLoading}
+            className="mt-6 w-full rounded-lg bg-white py-2.5 text-sm font-semibold text-black transition hover:bg-gray-200 disabled:opacity-60"
           >
-            Sign in
+            {isLoading ? ` Signing in... (${seconds}s)` : "Sign in"}
           </button>
 
           {/* FOOTER */}
           <p className="mt-6 text-center text-sm text-gray-400">
             No account?{" "}
             <Link
-              href="/signup"
+              href="/auth/signup"
               className="font-medium text-white hover:underline"
             >
               Create one

@@ -86,12 +86,7 @@ export default function AdvancedAddInline({
           notes: form.notes,
         };
 
-        // const updatedAt = buildUpdatedAt();
-        // if (updatedAt) {
-        //   payload.updated_at = updatedAt; // 🔥 THIS FIXES IT
-        // }
         if (form.status === "completed") {
-          // payload.updated_at = "2026-06-10T00:00:00";
           payload.updated_at = new Date().toISOString();
         }
 
@@ -125,8 +120,8 @@ if (mode === "edit") {
   if (updatedDateChanged && form.updated_date) {
     payload.updated_at = `${form.updated_date}T00:00:00`;
   } else if (becameCompleted || ratingChanged) {
-    payload.updated_at = "2026-06-14T00:00:00"; // testing
-    // payload.updated_at = new Date().toISOString(); // production
+    // payload.updated_at = "2026-06-14T00:00:00"; // testing
+    payload.updated_at = new Date().toISOString(); // production
   }
 
   const updated = await updateUserMedia(item.id, payload);

@@ -23,8 +23,8 @@ export default function SortControls({ sortBy, setSortBy }) {
         "
       >
         <option value="none">None</option>
-        <option value="status">Ratings </option>
-        {/* <option value="ratings"> Ratings </option> */}
+        <option value="status">Status </option>
+        <option value="ratings"> Ratings </option>
         <option value="airing_status">Airing Status</option>
         <option value="updated_at">Rated Date</option>
       </select>

@@ -33,6 +33,7 @@ const currentYear = new Date().getFullYear();
 
 export function useFeaturedItems(filteredItems) {
   // 🔒 Stable random generator (changes only on reload)
+  
   const [rand] = useState(() => mulberry32(Date.now()));
 
 

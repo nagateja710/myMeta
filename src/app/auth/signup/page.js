@@ -1,22 +1,39 @@
 "use client";
 const API_BASE = process.env.NEXT_PUBLIC_API_URL;
 
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 import Link from "next/link";
+import { setStyle } from "motion";
 export default function SignupPage() {
+  const [loading, setLoading] = useState(false);
+  const [seconds, setSeconds] = useState(0);
+
+  useEffect(() => {
+    let interval;
+
+    if (loading) {
+      interval = setInterval(() => {
+        setSeconds((prev) => prev + 1);
+      }, 1000);
+    }
+
+    return () => clearInterval(interval);
+  }, [loading]);
+
   const router = useRouter();
   const login = useAuthStore((s) => s.login);
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  
 
   async function handleSignup(e) {
     e.preventDefault();
     setError("");
+    setSeconds(0);
     setLoading(true);
 
     try {
@@ -51,6 +68,7 @@ export default function SignupPage() {
       setError(err.message || "Something went wrong");
     } finally {
       setLoading(false);
+     
     }
   }
 
@@ -113,7 +131,7 @@ export default function SignupPage() {
             disabled={loading}
             className="mt-6 w-full rounded-lg bg-white py-2.5 text-sm font-semibold text-black transition hover:bg-gray-200 disabled:opacity-50"
           >
-            {loading ? "Creating…" : "Create account"}
+            {loading ? `Creating... (${seconds}s)` : "Create account"}
           </button>
 
           {/* FOOTER */}

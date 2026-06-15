@@ -9,7 +9,7 @@ export default function GroupedGrid({
   removeItem 
 }) {
   const getGroupLabel = (group, sortBy) => {
-    if (sortBy === "status") {
+    if (sortBy === "status" || 'ratings') {
       const statusLabels = {
         todo: "To Do",
         doing: "In Progress",
