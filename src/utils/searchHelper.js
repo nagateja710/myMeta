@@ -4,14 +4,25 @@
 
    const tempImg="/images/download.png"
 /* ---------- BOOKS ---------- */
+// function mapBookResult(book) {
+//   return {
+//     id: book.id,
+//     cover:
+//       book.volumeInfo?.imageLinks?.thumbnail || tempImg,
+//     title: book.volumeInfo?.title || "Unknown title",
+//     subtitle: book.volumeInfo?.authors?.[0] || "Unknown author",
+//     year: book.volumeInfo?.publishedDate?.slice(0, 4) || "",
+//   };
+// }
 function mapBookResult(book) {
   return {
-    id: book.id,
-    cover:
-      book.volumeInfo?.imageLinks?.thumbnail || tempImg,
-    title: book.volumeInfo?.title || "Unknown title",
-    subtitle: book.volumeInfo?.authors?.[0] || "Unknown author",
-    year: book.volumeInfo?.publishedDate?.slice(0, 4) || "",
+    id: book.key, // e.g. "/works/OL82563W"
+    cover: book.cover_i
+      ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`
+      : tempImg,
+    title: book.title || "Unknown title",
+    subtitle: book.author_name?.[0] || "Unknown author",
+    year: book.first_publish_year?.toString() || "",
   };
 }
 
@@ -72,13 +83,13 @@ function mapSeriesResult(series) {
    ========================================================= */
 
 export const SEARCH_CONFIG = {
-  books: {
-    placeholder: "Search books...",
-    fetchUrl: (q) =>
-      `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}`,
-    extract: (data) =>
-      (data.items || []).map(mapBookResult),
-  },
+books: {
+  placeholder: "Search books...",
+  fetchUrl: (q) =>
+    `https://openlibrary.org/search.json?title=${encodeURIComponent(q)}`,
+  extract: (data) =>
+    (data.docs || []).map(mapBookResult),
+},
 
   movies: {
     placeholder: "Search movies...",

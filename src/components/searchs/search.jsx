@@ -40,7 +40,8 @@ export default function Search({ onAdd }) {
 
   useEffect(() => {
     if (!open || !config) return;
-    const t = setTimeout(() => handleSearch(query), 400);
+    const t = setTimeout(() => handleSearch(query), 1000);
+  
     return () => clearTimeout(t);
   }, [query, open, config]);
 
