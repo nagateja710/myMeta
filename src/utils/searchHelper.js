@@ -101,13 +101,24 @@ books: {
       (data.results || []).map(mapMovieResult),
   },
 
-  anime: {
-    placeholder: "Search anime...",
-    fetchUrl: (q) =>
-      `https://api.jikan.moe/v4/anime?q=${encodeURIComponent(q)}`,
-    extract: (data) =>
-      (data.data || []).map(mapAnimeResult),
-  },
+anime: {
+  placeholder: "Search anime...",
+
+  fetchUrl: (q) =>
+    `https://kitsu.io/api/edge/anime?filter[text]=${encodeURIComponent(q)}`,
+
+  extract: (data) =>
+    (data.data || []).map((item) => ({
+      id: item.id,
+      title: item.attributes?.canonicalTitle || "Unknown title",
+      subtitle: item.attributes?.subtype || "",
+      year: item.attributes?.startDate?.slice(0, 4) || "",
+      cover:
+        item.attributes?.posterImage?.small ||
+        item.attributes?.posterImage?.original ||
+        tempImg,
+    })),
+},
 
   games: {
     placeholder: "Search games...",
