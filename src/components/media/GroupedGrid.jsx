@@ -61,7 +61,7 @@ export default function GroupedGrid({
           <div key={group} className="mb-6">
             {groupLabel && (
               <h3 className="text-lg font-semibold text-white mb-3 px-2">
-                {groupLabel}
+                {(groupLabel=="none"?"Total Items":groupLabel)+` (${groupItems.length}) :`}
               </h3>
             )}
             <div
