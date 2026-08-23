@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-const LEVELS_PER_TYPE = 5;
-
+import { RATING_TYPES,LEVELS_PER_TYPE } from "@/components/ui/ratingtypes";
 /*
 |--------------------------------------------------------------------------
 | RATING TYPES
@@ -18,29 +17,6 @@ const LEVELS_PER_TYPE = 5;
 |--------------------------------------------------------------------------
 */
 
-const RATING_TYPES = [
-  {
-    id: "star",
-    label: "Stars",
-    icon: "★",
-    emptyIcon: "☆",
-    color: "text-yellow-400",
-  },
-  {
-    id: "heart",
-    label: "Hearts",
-    icon: "♥",
-    emptyIcon: "♡",
-    color: "text-red-400",
-  },
-  {
-    id: "diamond",
-    label: "Diamonds",
-    icon: "◆",
-    emptyIcon: "◇",
-    color: "text-blue-400",
-  },
-];
 
 const STATUS_LABELS = {
   todo: "To Do",

@@ -145,13 +145,13 @@ export default function FilterDropdown({
                     transition-all
                     ${
                       selectedRatings.includes(starCount.toString())
-                        ? "text-amber-400"
-                        : "text-amber-100"
+                        ? "text-green-50 bg-green-400"
+                        : "text-green-100"
                     }
                   `}
-                  title={`${starCount} Star${starCount !== 1 ? "s" : ""}`}
+                  title={`${starCount} Rating${starCount !== 1 ? "s" : ""}`}
                 >
-                  <span className="text-lg">★</span>
+                  <span className="text-lg">{starCount}</span>
                 </button>
               ))}
             </div>

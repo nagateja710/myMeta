@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-
+import { LEVELS_PER_TYPE,RATING_TYPES  } from "@/components/ui/ratingtypes";
 export function useMediaFilters(items) {
   const [selectedStatuses, setSelectedStatuses] = useState([]);
   const [selectedRatings, setSelectedRatings] = useState([]);
@@ -13,13 +13,38 @@ export function useMediaFilters(items) {
     );
   };
 
-  const toggleRating = (rating) => {
-    setSelectedRatings((prev) =>
-      prev.includes(rating)
-        ? prev.filter((r) => r !== rating)
-        : [...prev, rating]
+const toggleRating = (rating) => {
+  const level = Number(rating);
+
+  setSelectedRatings((prev) => {
+    const values = [];
+
+    // Generate 4, 9, 14, 19, ...
+    // based on the available rating types.
+    for (let r = level; r <= LEVELS_PER_TYPE * RATING_TYPES.length; r += LEVELS_PER_TYPE) {
+      values.push(r.toString());
+    }
+
+    const isSelected = values.every((r) =>
+      prev.includes(r)
     );
-  };
+
+    if (isSelected) {
+      // Remove all matching levels
+      return prev.filter(
+        (r) => !values.includes(r)
+      );
+    }
+
+    // Add all matching levels
+    return [
+      ...prev.filter(
+        (r) => !values.includes(r)
+      ),
+      ...values,
+    ];
+  });
+};
 
   const toggleAiringStatus = (status) => {
     setSelectedAiringStatuses((prev) =>
