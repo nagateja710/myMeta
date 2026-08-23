@@ -25,26 +25,14 @@ import { useLibraryStore } from "@/store/useLibraryStore";
    🎯 ALL POSSIBLE NAV ITEMS (SINGLE SOURCE OF TRUTH)
 ====================================================== */
 const navItems = [
-  { key: "books", label: "Books", path: "/solo/books", icon: Book },
-  { key: "movies", label: "Movies", path: "/solo/movies", icon: Film },
-  { key: "series", label: "Series", path: "/multi/series", icon: TvMinimalPlay },
-  { key: "anime", label: "Anime", path: "/multi/anime", icon: Tv },
-  
-  { key: "games", label: "Games", path: "/solo/games", icon: Gamepad2 },
+  { key: "books", label: "Books", path: "/multi/books", icon: Book,activeColor: "bg-blue-500" },
+  { key: "movies", label: "Movies", path: "/solo/movies", icon: Film,activeColor: "bg-purple-500" },
+  { key: "series", label: "Series", path: "/multi/series", icon: TvMinimalPlay,activeColor: "bg-rose-600" },
+  { key: "anime", label: "Anime", path: "/multi/anime", icon: Tv,activeColor: "bg-yellow-500" },
+  { key: "games", label: "Games", path: "/multi/games", icon: Gamepad2,activeColor: "bg-gray-500" },
   // { key: "friends", label: "Friends", path: "/temp/friends", icon: Users }, //for future
 ];
 
-/* ======================================================
-   🎨 ACTIVE COLORS
-====================================================== */
-const activeColor = {
-  "/solo/books": "bg-blue-500",
-  "/solo/movies": "bg-purple-500",
-  "/multi/anime": "bg-yellow-500",
-  "/multi/series": "bg-rose-600",
-  "/solo/games": "bg-gray-500",
-  "/friends": "bg-gradient-to-r from-green-400 to-yellow-400",
-};
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -54,6 +42,7 @@ export default function Navbar() {
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
   const hasHydrated = useAuthStore((s) => s.hasHydrated);
+  
 
   const [open, setOpen] = useState(false);
 
@@ -95,12 +84,15 @@ export default function Navbar() {
   /* ======================================================
      📌 LINK CLASS
   ====================================================== */
-  const linkClass = (path) =>
-    pathname === path
+  const navitemcolor = navItems.find((item) => item.path === pathname)?.activeColor || null;
+
+  const linkClass = (item) =>
+    pathname === item.path
       ? `font-semibold text-white rounded px-3 py-1 ${
-          activeColor[path] ?? "bg-black"
+          item.activeColor ?? "bg-black"
         }`
       : "text-slate-600 hover:text-black px-3 py-1";
+  
 
   return (
     <>
@@ -117,7 +109,7 @@ export default function Navbar() {
               <Link
                 key={item.key}
                 href={user ? item.path : "/auth/signin"}
-                className={linkClass(item.path)}
+                className={linkClass(item)}
               >
                 {item.label}
               </Link>
@@ -133,9 +125,10 @@ export default function Navbar() {
               <span className="text-sm text-slate-700">
                 Hi{" "}
                 <span
-                  className={`${
-                    activeColor[pathname] ?? "bg-black"
-                  } text-white px-2 py-1 rounded font-semibold uppercase`}
+                className={`${navitemcolor}  text-white px-2 py-1 rounded font-semibold uppercase`}
+                  // className={`${
+                  //   item.activeColor ?? "bg-black"
+                  // } text-white px-2 py-1 rounded font-semibold uppercase`}
                 >
                   {user.username}
                 </span>
@@ -256,7 +249,7 @@ export default function Navbar() {
                 href={user ? item.path : "/auth/signin"}
                 className={`flex flex-col items-center rounded-full m-3 justify-center flex-2 py-1 ${
                   isActive
-                    ? `${activeColor[item.path]} text-white`
+                    ? `${item.activeColor} text-white`
                     : "text-slate-500"
                 }`}
               >
