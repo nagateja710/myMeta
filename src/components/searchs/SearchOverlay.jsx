@@ -39,7 +39,7 @@ function normalizeItem(item) {
 
 export default function SearchOverlay({ loading, results }) {
   const pathname = usePathname();
-  const section= pathname.split('/')[1] === "multi" ? pathname.split('/')[2] : pathname.split('/')[2].slice(0, -1);
+  const section= (pathname.split('/')[2] === "anime" || pathname.split('/')[2] === "series")? pathname.split('/')[2] : pathname.split('/')[2].slice(0, -1);
   const addItem = useLibraryStore((s) => s.addItem);
 
   const [advancedItem, setAdvancedItem] = useState(null);
