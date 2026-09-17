@@ -84,7 +84,7 @@ export default function Navbar() {
   /* ======================================================
      📌 LINK CLASS
   ====================================================== */
-  const navitemcolor = navItems.find((item) => item.path === pathname)?.activeColor || null;
+  const navitemcolor = navItems.find((item) => item.path === pathname)?.activeColor || "bg-gray-500";
 
   const linkClass = (item) =>
     pathname === item.path

@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import SearchOverlay from "./SearchOverlay";
 import { SEARCH_CONFIG } from "@/utils/searchHelper";
+const tempImg="/images/download.png"
 
 
 export default function Search({ onAdd }) {
@@ -17,6 +18,15 @@ export default function Search({ onAdd }) {
   const [open, setOpen] = useState(false);
 
   const containerRef = useRef(null);
+  
+  const temp = {
+   id: 0,
+    cover:tempImg,
+    title: query,
+    subtitle: section ? section.toUpperCase() : "UNKNOWN",
+    year:2069,
+    isDefault: true,
+ };
 
   async function handleSearch(q) {
     if (!config || !q.trim()) {
@@ -29,7 +39,7 @@ export default function Search({ onAdd }) {
      const res = await fetch(config.fetchUrl(q));
 
       const data = await res.json();
-      setResults(config.extract(data));
+      setResults([temp, ...config.extract(data)]);
     } catch (e) {
       console.error(e);
       setResults([]);
@@ -37,6 +47,12 @@ export default function Search({ onAdd }) {
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    setQuery("");
+    setResults([]);
+    setOpen(false);
+}, [section]);
 
   useEffect(() => {
     if (!open || !config) return;

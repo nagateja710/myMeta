@@ -39,7 +39,14 @@ function normalizeItem(item) {
 
 export default function SearchOverlay({ loading, results }) {
   const pathname = usePathname();
-  const section= (pathname.split('/')[2] === "anime" || pathname.split('/')[2] === "series")? pathname.split('/')[2] : pathname.split('/')[2].slice(0, -1);
+
+  const pathSection = pathname.split("/")[2];
+
+  const section =
+    pathSection === "anime" || pathSection === "series"
+      ? pathSection
+      : pathSection.slice(0, -1);
+
   const addItem = useLibraryStore((s) => s.addItem);
 
   const [advancedItem, setAdvancedItem] = useState(null);
@@ -48,27 +55,25 @@ export default function SearchOverlay({ loading, results }) {
   /* =========================
      ⚡ QUICK ADD
      ========================= */
-    // console.log(section,section==='anime');
-async function quickAdd(item) {
-  try {
-    setAddingId(item.id);
+  async function quickAdd(item) {
+    try {
+      setAddingId(item.id);
 
-    const created = await addToLibrary({
-      type: section,
-      title: item.title,
-      synopsis: item.subtitle,
-      release_year: safeYear(item.year),
-      cover_url: item.cover,
-    });
+      const created = await addToLibrary({
+        type: section,
+        title: item.title,
+        synopsis: item.subtitle,
+        release_year: safeYear(item.year),
+        cover_url: item.cover,
+      });
 
-    addItem(normalizeItem(created));
-  } catch (err) {
-    console.warn("Already in library or failed:", err.message);
-  } finally {
-    setAddingId(null);
+      addItem(normalizeItem(created));
+    } catch (err) {
+      console.warn("Already in library or failed:", err.message);
+    } finally {
+      setAddingId(null);
+    }
   }
-}
-
 
   /* =========================
      🔥 ADVANCED ADD VIEW
@@ -87,7 +92,6 @@ async function quickAdd(item) {
           mode="add"
           onCancel={() => setAdvancedItem(null)}
           onSaved={(created) => {
-            // 🔥 PUSH INTO GLOBAL STORE
             addItem(normalizeItem(created));
             setAdvancedItem(null);
           }}
@@ -99,10 +103,48 @@ async function quickAdd(item) {
   /* =========================
      🔍 SEARCH RESULTS
      ========================= */
-  return (
-    <div className="mt-2 w-full rounded-lg border bg-white shadow-xl max-h-[60vh] overflow-y-auto">
+const [firstItem, ...searchResults] = results;
+
+return (
+  <div className="mt-2 w-full rounded-lg border bg-white shadow-xl max-h-[60vh] overflow-y-auto">
+    {/* ➕ CUSTOM / FIRST ITEM */}
+    {firstItem && (
+      <div className="p-3 bg-purple-50 border-l-4 border-purple-500 hover:bg-purple-100 transition">
+        <div className="flex items-center gap-3">
+          <div className="w-7 h-10 shrink-0 rounded flex items-center justify-center bg-purple-500 text-white text-2xl font-light">
+            +
+          </div>
+
+          <div className="flex flex-col flex-1 min-w-0">
+            <p className="font-medium text-gray-700 truncate">
+              {firstItem.title}
+            </p>
+
+            <p className="text-sm text-gray-600">
+              {` Add to ${firstItem.subtitle}`}
+            </p>
+          </div>
+              <button
+                onClick={() => setAdvancedItem(firstItem)}
+                className="w-7 h-7 flex items-center justify-center rounded-full border  text-white bg-purple-500 text-lg"
+                title="Advanced Add"
+              >
+                +
+              </button>
+          {/* <button
+            onClick={() => setAdvancedItem(firstItem)}
+            className="px-3 h-8 flex items-center justify-center rounded-full bg-purple-500 text-white text-sm font-medium hover:bg-purple-600 transition"
+          >
+            Add
+          </button> */}
+        </div>
+      </div>
+    )}
+
+    {/* 🔍 NORMAL SEARCH RESULTS */}
+    {searchResults.length > 0 && (
       <ul className="divide-y">
-        {results.map((item, index) => (
+        {searchResults.map((item, index) => (
           <li
             key={`${item.id}-${index}`}
             className="flex items-start gap-3 p-3 hover:bg-slate-100"
@@ -119,8 +161,11 @@ async function quickAdd(item) {
             <div className="flex flex-col flex-1 text-sm">
               <p className="font-medium">{item.title}</p>
               <p className="text-gray-600">{item.subtitle}</p>
+
               {item.year && (
-                <p className="text-xs text-gray-500">{item.year}</p>
+                <p className="text-xs text-gray-500">
+                  {item.year}
+                </p>
               )}
             </div>
 
@@ -148,10 +193,13 @@ async function quickAdd(item) {
           </li>
         ))}
       </ul>
+    )}
 
-      {!loading && results.length === 0 && (
-        <p className="px-4 py-3 text-sm text-gray-500">No results</p>
-      )}
-    </div>
-  );
+    {!loading && results.length === 0 && (
+      <p className="px-4 py-3 text-sm text-gray-500">
+        No results
+      </p>
+    )}
+  </div>
+);
 }
